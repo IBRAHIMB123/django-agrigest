@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Ventes | AgriGest{% endblock %}
+{% block page_title %}Ventes{% endblock %}
+
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header">
+      <h2 class="panel-title">Gestion des ventes</h2>
+    </div>
+    <div class="data-grid">
+      <div class="form-panel">
+        <h3 class="card-title">Enregistrer une vente</h3>
+        <form method="post" class="form-panel">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="primary-btn">Enregistrer</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Clients</h3>
+        <form method="post" action="{% url 'ventes:client_create' %}" class="form-panel">
+          {% csrf_token %}
+          {{ client_form.as_p }}
+          <button type="submit" class="secondary-btn">Ajouter un client</button>
+        </form>
+        <ul style="padding-left: 18px; color: var(--muted); line-height: 1.9; margin-top: 12px;">
+          {% for client in clients %}
+            <li>{{ client.name }} — {{ client.phone|default:'—' }}</li>
+          {% empty %}
+            <li>Aucun client enregistré.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <form method="get" class="filter-bar"><label class="filter-search"><span>Rechercher une vente</span><input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Produit, client ou campagne" /></label><button class="secondary-btn" type="submit">Rechercher</button>{% if query %}<a class="action-link" href="{% url 'ventes:list' %}">Effacer</a>{% endif %}</form>
+    <div style="padding: 0 22px 22px;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Client</th>
+              <th>Quantité</th>
+              <th>Prix unitaire</th>
+              <th>Total</th>
+              <th>Campagne</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vente in ventes %}
+              <tr>
+                <td>{{ vente.product_name }}</td>
+                <td>{{ vente.client.name|default:'—' }}</td>
+                <td>{{ vente.quantity }}</td>
+                <td>{{ vente.unit_price }} FCFA</td>
+                <td>{{ vente.total_amount }} FCFA</td>
+                <td>{{ vente.campaign.name|default:'-' }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6"><div class="empty-state">Aucune vente enregistrée.</div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,4 @@
+﻿{% extends 'base.html' %}
+{% block title %}Supprimer la campagne | AgriGest{% endblock %}
+{% block page_title %}Confirmer la suppression{% endblock %}
+{% block content %}<div class="page-card narrow-card"><div class="panel-header"><h1 class="panel-title">Supprimer la campagne</h1></div><div class="confirmation-body"><p>Supprimer la campagne <strong>{{ campaign.name }}</strong> ? Les ventes, depenses et recoltes liees seront conservees, mais ne seront plus associees a cette campagne.</p><form method="post" data-confirm="Supprimer cette campagne ?">{% csrf_token %}<a class="secondary-btn" href="{% url 'campaigns:list' %}">Annuler</a><button type="submit" class="danger-btn">Supprimer</button></form></div></div>{% endblock %}

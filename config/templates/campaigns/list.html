@@ -1,0 +1,37 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block title %}Campagnes | AgriGest{% endblock %}
+{% block page_title %}Campagnes agricoles{% endblock %}
+{% block content %}
+<div class="page-card">
+  <div class="panel-header"><div><h1 class="panel-title">Campagnes agricoles</h1><p class="panel-description">Organisez chaque saison autour d'une parcelle, d'une culture et d'un calendrier.</p></div></div>
+  <div class="data-grid">
+    <section class="form-panel"><h2 class="card-title">Nouvelle campagne</h2><form method="post" class="form-panel">{% csrf_token %}{{ form.as_p }}<button type="submit" class="primary-btn">Creer la campagne</button></form></section>
+    <section class="card"><h2 class="card-title">Cycle de production</h2><p class="small-copy">Une campagne relie une culture a sa parcelle et permet de suivre les dates, recoltes et depenses du cycle.</p><a href="{% url 'rapports:index' %}" class="action-link">Voir les resultats</a></section>
+  </div>
+  <form method="get" class="filter-bar">
+    <label class="filter-search"><span>Rechercher</span><input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Nom, culture ou parcelle" /></label>
+    <label><span>Statut</span><select class="form-control" name="status"><option value="">Tous les statuts</option>{% for value,label in status_choices %}<option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <button class="secondary-btn" type="submit">Filtrer</button>
+    {% if query or status %}<a class="action-link" href="{% url 'campaigns:list' %}">Effacer</a>{% endif %}
+  </form>
+  <div class="resource-grid campaign-grid">
+    {% for campaign in campaigns %}
+      <article class="resource-card">
+        <div class="resource-image">
+          {% if 'riz' in campaign.culture.name|lower %}<img src="{% static 'img/field-rice.webp' %}" alt="Riziere en production" loading="lazy" />
+          {% elif 'ma' in campaign.culture.name|lower %}<img src="{% static 'img/field-maize.webp' %}" alt="Culture de mais" loading="lazy" />
+          {% else %}<img src="{% static 'img/harvest-rice.webp' %}" alt="Travail agricole au champ" loading="lazy" />{% endif %}
+          <span class="resource-badge status-{{ campaign.status }}">{{ campaign.get_status_display }}</span>
+        </div>
+        <div class="resource-content">
+          <div class="resource-eyebrow">{{ campaign.parcelle.name }} · {{ campaign.culture.name }}</div>
+          <h2>{{ campaign.name }}<span>{{ campaign.start_date|date:'d/m/Y' }} — {{ campaign.end_date|date:'d/m/Y' }}</span></h2>
+          {% if campaign.status == 'active' %}<div class="progress-label"><span>Avancement calendaire</span><strong>{{ campaign.progress }}%</strong></div><div class="campaign-progress"><span style="width: {{ campaign.progress }}%"></span></div>{% endif %}
+          <div class="table-actions"><a class="action-link" href="{% url 'campaigns:edit' campaign.pk %}">Modifier</a><form method="post" action="{% url 'campaigns:delete' campaign.pk %}" data-confirm="Supprimer cette campagne ?">{% csrf_token %}<button type="submit" class="action-link danger">Supprimer</button></form></div>
+        </div>
+      </article>
+    {% empty %}<div class="empty-state resource-empty">Aucune campagne ne correspond a ces filtres. Creez une campagne pour suivre votre prochain cycle de production.</div>{% endfor %}
+  </div>
+</div>
+{% endblock %}

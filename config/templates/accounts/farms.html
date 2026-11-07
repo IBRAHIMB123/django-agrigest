@@ -1,0 +1,51 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block title %}Exploitations | AgriGest{% endblock %}
+{% block page_title %}Exploitations{% endblock %}
+{% block content %}
+<div class="page-card">
+  <div class="panel-header">
+    <div><h1 class="panel-title">Vos exploitations</h1><p class="panel-description">Chaque exploitation garde ses parcelles, ses stocks et ses resultats separes.</p></div>
+  </div>
+  <div class="data-grid">
+    <section class="form-panel">
+      <h2 class="card-title">Ajouter une exploitation</h2>
+      <form method="post" class="form-panel">
+        {% csrf_token %}{{ form.as_p }}
+        <button class="primary-btn" type="submit">Creer l'exploitation</button>
+      </form>
+    </section>
+    <section class="card">
+      <h2 class="card-title">Vue d'ensemble</h2>
+      <div class="summary-box" style="margin-top: 12px;">
+        <div class="mini"><div class="label">Exploitations</div><div class="value">{{ farms.count }}</div></div>
+        <div class="mini"><div class="label">Active</div><div class="value">{{ active_farm.name }}</div></div>
+      </div>
+    </section>
+  </div>
+  <div class="collection-toolbar"><strong>{{ farms.count }} exploitation{{ farms.count|pluralize }}</strong></div>
+  <div class="resource-grid farm-grid">
+    {% for farm in farms %}
+      <article class="resource-card">
+        <a class="resource-image" href="{% url 'accounts:farm_detail' farm.pk %}">
+          <img src="{% static 'img/field-maize.webp' %}" alt="Champ agricole" loading="lazy" />
+          {% if farm.pk == active_farm.pk %}<span class="resource-badge">Exploitation active</span>{% endif %}
+        </a>
+        <div class="resource-content">
+          <div class="resource-eyebrow">{{ farm.location|default:'Localisation a renseigner' }}</div>
+          <h2>{{ farm.name }}</h2>
+          <div class="resource-meta"><span>{{ farm.parcel_count|default:0 }} parcelle{{ farm.parcel_count|pluralize }}</span><span>{{ farm.total_area|default:0|floatformat:1 }} ha</span></div>
+          <div class="table-actions">
+            <a class="action-link" href="{% url 'accounts:farm_detail' farm.pk %}">Ouvrir</a>
+            <a class="action-link" href="{% url 'accounts:farm_edit' farm.pk %}">Modifier</a>
+            {% if farm.pk != active_farm.pk %}<form method="post" action="{% url 'accounts:farm_activate' farm.pk %}">{% csrf_token %}<button class="action-link" type="submit">Activer</button></form>{% endif %}
+            {% if farms.count > 1 %}<a class="action-link danger" href="{% url 'accounts:farm_delete' farm.pk %}">Supprimer</a>{% endif %}
+          </div>
+        </div>
+      </article>
+    {% empty %}
+      <div class="empty-state resource-empty">Aucune exploitation n'est encore configuree. Creez-en une avec le formulaire ci-dessus.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

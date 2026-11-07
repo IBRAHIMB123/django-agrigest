@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block title %}Modifier {{ culture.name }} | AgriGest{% endblock %}
+{% block page_title %}Modifier une culture{% endblock %}
+{% block content %}<div class="page-card narrow-card"><div class="panel-header"><h1 class="panel-title">Modifier {{ culture.name }}</h1><a class="secondary-btn" href="{% url 'cultures:list' %}">Annuler</a></div><div class="data-grid"><form method="post" class="form-panel">{% csrf_token %}{{ form.as_p }}<button type="submit" class="primary-btn">Enregistrer les modifications</button></form></div></div>{% endblock %}

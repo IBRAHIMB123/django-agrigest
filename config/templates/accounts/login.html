@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Connexion | AgriGest{% endblock %}
+
+{% block auth_content %}
+  <div class="auth-shell">
+    <div class="auth-layout">
+      <section class="auth-story">
+        <img src="{% static 'img/field-rice.webp' %}" alt="Une agricultrice travaille dans une riziere" fetchpriority="high" />
+        <div class="auth-story-overlay"></div>
+        <div class="auth-story-copy">
+          <span class="auth-story-label">AGRICULTURE ? GESTION ? CROISSANCE</span>
+          <h2>L'agriculture intelligente,<br />simplement.</h2>
+          <p>Pilotez votre exploitation avec une vision claire de chaque saison.</p>
+        </div>
+      </section>
+      <div class="auth-card">
+      <div class="auth-brand">
+        <div class="brand-mark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3C8.5 6.5 6 9 6 12.5C6 16.2 8.7 19 12 19C15.3 19 18 16.2 18 12.5C18 9 15.5 6.5 12 3Z" stroke="white" stroke-width="1.7"/><path d="M12 8.5V15" stroke="white" stroke-width="1.7" stroke-linecap="round"/><path d="M9.2 12H14.8" stroke="white" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="brand-name" style="color: var(--forest);">AgriGest</div>
+          <div class="brand-sub" style="color: var(--muted);">Accès exploitant</div>
+        </div>
+      </div>
+      <h1 class="auth-title">Connexion</h1>
+      <p class="auth-subtitle">Accédez à votre exploitation agricole et pilotez votre activité.</p>
+
+      {% if form.errors %}
+        <div class="message error">Identifiants invalides. Merci de vérifier vos informations.</div>
+      {% endif %}
+
+      <form method="post" class="auth-form">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="id_username">Nom d'utilisateur</label>
+          {{ form.username }}
+        </div>
+        <div class="form-group">
+          <label for="id_password">Mot de passe</label>
+          <div class="password-wrap">
+            {{ form.password }}
+            <button type="button" class="password-toggle" data-password-toggle="id_password" aria-label="Afficher le mot de passe">Afficher</button>
+          </div>
+        </div>
+        <div class="auth-actions">
+          <a href="{% url 'accounts:password_reset' %}" class="muted-link">Mot de passe oublié ?</a>
+          <button type="submit" class="primary-btn">Se connecter</button>
+        </div>
+      </form>
+
+      <p class="small-copy" style="margin-top: 18px; text-align: center;">
+        Vous n'avez pas de compte ? <a href="{% url 'accounts:signup' %}" class="muted-link">Créer un compte</a>
+      </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

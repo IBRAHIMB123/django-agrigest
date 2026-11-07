@@ -1,0 +1,6 @@
+﻿{% extends 'base.html' %}
+{% block title %}Modifier {{ farm.name }} | AgriGest{% endblock %}
+{% block page_title %}Modifier l'exploitation{% endblock %}
+{% block content %}
+<div class="page-card narrow-card"><div class="panel-header"><h1 class="panel-title">Modifier {{ farm.name }}</h1><a class="secondary-btn" href="{% url 'accounts:farm_detail' farm.pk %}">Annuler</a></div><div class="data-grid"><form method="post" class="form-panel">{% csrf_token %}{{ form.as_p }}<button class="primary-btn" type="submit">Enregistrer les modifications</button></form></div></div>
+{% endblock %}

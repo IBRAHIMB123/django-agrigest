@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier la parcelle | AgriGest{% endblock %}
+{% block page_title %}Parcelles{% endblock %}
+
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header">
+      <h2 class="panel-title">Modifier {{ parcelle.name }}</h2>
+    </div>
+    <div class="data-grid">
+      <div class="form-panel">
+        <form method="post" class="form-panel">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="primary-btn">Enregistrer les modifications</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

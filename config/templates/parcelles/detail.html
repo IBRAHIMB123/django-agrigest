@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ parcelle.name }} | AgriGest{% endblock %}
+{% block page_title %}Parcelle{% endblock %}
+
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header">
+      <h2 class="panel-title">{{ parcelle.name }}</h2>
+      <div class="table-actions">
+        <a href="{% url 'parcelles:edit' parcelle.pk %}" class="action-link">Modifier</a>
+        <form method="post" action="{% url 'parcelles:delete' parcelle.pk %}" data-confirm="Supprimer cette parcelle ?">{% csrf_token %}<button type="submit" class="action-link danger">Supprimer</button></form>
+      </div>
+    </div>
+    <div class="data-grid">
+      <div>
+        <div class="summary-box">
+          <div class="mini"><div class="label">Localisation</div><div class="value">{{ parcelle.location }}</div></div>
+          <div class="mini"><div class="label">Superficie</div><div class="value">{{ parcelle.area }} ha</div></div>
+          <div class="mini"><div class="label">Type de sol</div><div class="value">{{ parcelle.get_soil_type_display }}</div></div>
+          <div class="mini"><div class="label">Statut</div><div class="value">{{ parcelle.get_status_display }}</div></div>
+        </div>
+        <div class="card" style="margin-top: 18px;">
+          <h3 class="card-title">Description</h3>
+          <p style="color: var(--muted); line-height: 1.7; margin: 12px 0 0;">{{ parcelle.description|default:'Aucune description n’a été ajoutée pour cette parcelle.' }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Détails</h3>
+        <ul style="padding-left: 18px; line-height: 1.9; color: var(--muted); margin-top: 12px;">
+          <li>Exploitation: {{ parcelle.farm.name }}</li>
+          <li>Créée le: {{ parcelle.created_at|date:'d/m/Y' }}</li>
+          <li>Dernière mise à jour: {{ parcelle.updated_at|date:'d/m/Y' }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}

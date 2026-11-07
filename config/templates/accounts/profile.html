@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil | AgriGest{% endblock %}
+{% block page_title %}Paramètres{% endblock %}
+
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header">
+      <h2 class="panel-title">Profil de l'exploitation</h2>
+      <a href="{% url 'accounts:logout' %}" class="ghost-btn">Se déconnecter</a>
+    </div>
+    <div class="data-grid">
+      <div>
+        <div class="summary-box">
+          <div class="mini">
+            <div class="label">Utilisateur</div>
+            <div class="value">{{ user.get_full_name|default:user.username }}</div>
+          </div>
+          <div class="mini">
+            <div class="label">Email</div>
+            <div class="value">{{ user.email|default:'Non renseigné' }}</div>
+          </div>
+          <div class="mini">
+            <div class="label">Exploitation</div>
+            <div class="value">{{ active_farm.name }}</div>
+          </div>
+          <div class="mini">
+            <div class="label">Localisation</div>
+            <div class="value">{{ active_farm.location|default:'Non définie' }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Mesures de sécurité</h3>
+        <ul style="padding-left: 18px; line-height: 1.9; color: var(--muted); margin-top: 10px;">
+          <li>Protection des pages privées</li>
+          <li>Authentification Django standard</li>
+          <li>Isolation des données par exploitation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}

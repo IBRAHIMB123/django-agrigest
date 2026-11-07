@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cultures | AgriGest{% endblock %}
+{% block page_title %}Cultures{% endblock %}
+
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header">
+      <h2 class="panel-title">Suivi des cultures</h2>
+      <a href="{% url 'dashboard:index' %}" class="secondary-btn">Retour</a>
+    </div>
+    <div class="data-grid">
+      <div class="form-panel">
+        <h3 class="card-title">Ajouter une culture</h3>
+        <form method="post" class="form-panel">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="primary-btn">Enregistrer</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Vue d'ensemble</h3>
+        <div class="summary-box" style="margin-top: 12px;">
+          <div class="mini"><div class="label">Cultures</div><div class="value">{{ cultures.count }}</div></div>
+          <div class="mini"><div class="label">Santé</div><div class="value">{{ average_health|floatformat:0 }}%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="collection-toolbar">
+      <div><strong>{{ cultures.count }} cultures</strong><span class="toolbar-caption">Suivi des parcelles et des stades</span></div>
+      <div class="view-toggle" data-view-set="cultures" role="group" aria-label="Mode d'affichage">
+        <button type="button" data-view-target="cards" class="active" aria-pressed="true">Cartes</button>
+        <button type="button" data-view-target="table" aria-pressed="false">Tableau</button>
+      </div>
+    </div>
+    <div class="resource-grid" data-view-panel="cards">
+      {% for culture in cultures %}
+        <article class="resource-card">
+          <div class="resource-image">
+            {% if 'riz' in culture.name|lower %}
+              <img src="{% static 'img/field-rice.webp' %}" alt="Culture de riz en riziere" loading="lazy" />
+            {% elif 'ma' in culture.name|lower %}
+              <img src="{% static 'img/field-maize.webp' %}" alt="Culture de mais dans un champ" loading="lazy" />
+            {% else %}
+              <img src="{% static 'img/harvest-rice.webp' %}" alt="Production agricole au champ" loading="lazy" />
+            {% endif %}
+            <span class="resource-badge">{{ culture.get_stage_display }}</span>
+          </div>
+          <div class="resource-content">
+            <div class="resource-eyebrow">{{ culture.parcelle.name }}</div>
+            <h3>{{ culture.name }}{% if culture.variety %}<span>{{ culture.variety }}</span>{% endif %}</h3>
+            <div class="resource-meta"><span>Plant?e le {{ culture.planted_date|date:'d/m/Y' }}</span><span>Sant? {{ culture.health_score }}%</span></div>
+            <div class="table-actions"><a class="action-link" href="{% url 'cultures:edit' culture.pk %}">Modifier</a><form method="post" action="{% url 'cultures:delete' culture.pk %}" data-confirm="Supprimer cette culture ?">{% csrf_token %}<button type="submit" class="action-link danger">Supprimer</button></form></div>
+          </div>
+        </article>
+      {% empty %}
+        <div class="empty-state resource-empty">Aucune culture n'a encore ?t? cr??e. Ajoutez une culture avec le formulaire ci-dessus pour commencer le suivi.</div>
+      {% endfor %}
+    </div>
+    <div class="table-view" data-view-panel="table" hidden>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Culture</th>
+              <th>Parcelle</th>
+              <th>Variete</th>
+              <th>Date plantation</th>
+              <th>Stade</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for culture in cultures %}
+              <tr>
+                <td>{{ culture.name }}</td>
+                <td>{{ culture.parcelle.name }}</td>
+                <td>{{ culture.variety|default:'—' }}</td>
+                <td>{{ culture.planted_date|date:'d/m/Y' }}</td>
+                <td>{{ culture.get_stage_display }}</td>
+                <td>
+                  <div class="table-actions"><a class="action-link" href="{% url 'cultures:edit' culture.pk %}">Modifier</a><form method="post" action="{% url 'cultures:delete' culture.pk %}" data-confirm="Supprimer cette culture ?">{% csrf_token %}<button type="submit" class="action-link danger">Supprimer</button></form></div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6"><div class="empty-state">Aucune culture n'a été enregistrée.</div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

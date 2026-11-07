@@ -1,0 +1,6 @@
+﻿{% extends 'base.html' %}
+{% block title %}Supprimer {{ farm.name }} | AgriGest{% endblock %}
+{% block page_title %}Confirmer la suppression{% endblock %}
+{% block content %}
+<div class="page-card narrow-card"><div class="panel-header"><h1 class="panel-title">Supprimer l'exploitation</h1></div><div class="confirmation-body"><p>Supprimer <strong>{{ farm.name }}</strong> supprimera aussi ses parcelles, cultures, campagnes et donnees operationnelles associees.</p><form method="post" data-confirm="Supprimer cette exploitation et ses donnees associees ?">{% csrf_token %}<a class="secondary-btn" href="{% url 'accounts:farms' %}">Garder l'exploitation</a> <button class="danger-btn" type="submit">Supprimer definitivement</button></form></div></div>
+{% endblock %}

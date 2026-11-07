@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block title %}Supprimer la culture | AgriGest{% endblock %}
+{% block page_title %}Cultures{% endblock %}
+{% block content %}<div class="page-card narrow-card"><div class="panel-header"><h1 class="panel-title">Supprimer la culture</h1></div><div class="confirmation-body"><p>Voulez-vous vraiment supprimer <strong>{{ culture.name }}</strong> ? Cette action est irreversible.</p>{% if not can_delete %}<div class="message error">Cette culture est liee a une campagne ou une recolte. Supprimez ou reaffectez d'abord les donnees liees.</div>{% else %}<form method="post" data-confirm="Supprimer cette culture ?">{% csrf_token %}<button class="danger-btn" type="submit">Confirmer la suppression</button><a class="secondary-btn" href="{% url 'cultures:list' %}">Annuler</a></form>{% endif %}</div></div>{% endblock %}

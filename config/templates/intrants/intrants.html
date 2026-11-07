@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Intrants & stock | AgriGest{% endblock %}
+{% block page_title %}Intrants & stock{% endblock %}
+
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header">
+      <h2 class="panel-title">Gestion des intrants et du stock</h2>
+    </div>
+    <div class="data-grid">
+      <div class="form-panel">
+        <h3 class="card-title">Ajouter un intrant</h3>
+        <form method="post" class="form-panel">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="primary-btn">Enregistrer</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Historique des mouvements</h3>
+        <form method="post" action="{% url 'intrants:movement' %}" class="form-panel">
+          {% csrf_token %}
+          {{ movement_form.as_p }}
+          <button type="submit" class="secondary-btn">Enregistrer le mouvement</button>
+        </form>
+        <ul style="padding-left: 18px; color: var(--muted); line-height: 1.9; margin-top: 12px;">
+          {% for movement in movements %}
+            <li>{{ movement.intrant.name }} — {{ movement.get_movement_type_display }} ({{ movement.quantity }})</li>
+          {% empty %}
+            <li>Aucun mouvement enregistré.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div style="padding: 0 22px 22px;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Intrant</th>
+              <th>Catégorie</th>
+              <th>Quantité</th>
+              <th>Seuil</th>
+              <th>Fournisseur</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for intrant in intrants %}
+              <tr>
+                <td>{{ intrant.name }}</td>
+                <td>{{ intrant.get_category_display }}</td>
+                <td>{{ intrant.quantity }} {{ intrant.unit }}</td>
+                <td>{{ intrant.min_stock }} {{ intrant.unit }}</td>
+                <td>{{ intrant.supplier|default:'—' }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5"><div class="empty-state">Aucun intrant enregistré.</div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

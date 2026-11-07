@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Rapports | AgriGest{% endblock %}
+{% block page_title %}Rapports et statistiques{% endblock %}
+
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header">
+      <h2 class="panel-title">Analyse financière</h2>
+      <div class="table-actions">
+        <a href="{% url 'rapports:export_csv' %}?period={{ period }}" class="secondary-btn">Exporter Excel</a>
+        <a href="{% url 'rapports:export_pdf' %}?period={{ period }}" class="primary-btn">Exporter PDF</a>
+      </div>
+    </div>
+    <div class="data-grid">
+      <div class="card">
+        <form method="get" class="form-panel">
+          <div class="form-group">
+            <label for="period">Période</label>
+            <select name="period" class="form-control" onchange="this.form.submit()">
+              <option value="7" {% if period == '7' %}selected{% endif %}>7 jours</option>
+              <option value="30" {% if period == '30' %}selected{% endif %}>30 jours</option>
+              <option value="90" {% if period == '90' %}selected{% endif %}>90 jours</option>
+              <option value="365" {% if period == '365' %}selected{% endif %}>365 jours</option>
+            </select>
+          </div>
+        </form>
+        <div class="summary-box" style="margin-top: 16px;">
+          <div class="mini"><div class="label">Chiffre d'affaires</div><div class="value">{{ revenue }} FCFA</div></div>
+          <div class="mini"><div class="label">Dépenses</div><div class="value">{{ expense }} FCFA</div></div>
+          <div class="mini"><div class="label">Bénéfice</div><div class="value">{{ profit }} FCFA</div></div>
+          <div class="mini"><div class="label">Période</div><div class="value">{{ period }} jours</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Performances récentes</h3>
+        <ul style="padding-left: 18px; color: var(--muted); line-height: 1.9; margin-top: 12px;">
+          {% for vente in ventes %}
+            <li>{{ vente.product_name }} — {{ vente.total_amount }} FCFA</li>
+          {% empty %}
+            <li>Aucune vente pour cette période.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div style="padding: 0 22px 22px;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Montant</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vente in ventes %}
+              <tr>
+                <td>Vente</td>
+                <td>{{ vente.sale_date|date:'d/m/Y' }}</td>
+                <td>{{ vente.total_amount }} FCFA</td>
+                <td>{{ vente.product_name }}</td>
+              </tr>
+            {% endfor %}
+            {% for depense in depenses %}
+              <tr>
+                <td>Dépense</td>
+                <td>{{ depense.date|date:'d/m/Y' }}</td>
+                <td>{{ depense.amount }} FCFA</td>
+                <td>{{ depense.description|default:depense.get_category_display }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

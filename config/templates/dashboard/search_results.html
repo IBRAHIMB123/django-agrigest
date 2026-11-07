@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Recherche | AgriGest{% endblock %}
+{% block page_title %}Recherche{% endblock %}
+
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header">
+      <h2 class="panel-title">Résultats pour « {{ query }} »</h2>
+    </div>
+    <div class="data-grid">
+      <div>
+        {% if results %}
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Nom</th>
+                  <th>Localisation</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in results %}
+                  <tr>
+                    <td>{{ item.type }}</td>
+                    <td><a class="result-link" href="{{ item.url }}">{{ item.name }}</a></td>
+                    <td>{{ item.location|default:"?" }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state">Aucun résultat trouvé pour votre recherche.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

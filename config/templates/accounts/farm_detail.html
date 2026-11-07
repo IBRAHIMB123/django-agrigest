@@ -1,0 +1,23 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ farm.name }} | AgriGest{% endblock %}
+{% block page_title %}Exploitation{% endblock %}
+{% block content %}
+<div class="page-card">
+  <div class="farm-detail-hero">
+    <img src="{% static 'img/field-maize.webp' %}" alt="Champ de culture" />
+    <div class="farm-detail-overlay"></div>
+    <div class="farm-detail-copy"><span class="auth-story-label">EXPLOITATION AGRICOLE</span><h1>{{ farm.name }}</h1><p>{{ farm.location|default:'Localisation a renseigner' }}</p></div>
+  </div>
+  <div class="farm-detail-stats">
+    <div><span>Superficie enregistree</span><strong>{{ farm.total_area|default:0|floatformat:1 }} ha</strong></div>
+    <div><span>Parcelles</span><strong>{{ farm.parcel_count|default:0 }}</strong></div>
+    <div><span>Responsable</span><strong>{{ farm.user.get_full_name|default:farm.user.username }}</strong></div>
+  </div>
+  <div class="panel-header"><h2 class="panel-title">Parcelles de l'exploitation</h2><div class="table-actions"><a class="secondary-btn" href="{% url 'accounts:farm_edit' farm.pk %}">Modifier</a><a class="primary-btn" href="{% url 'parcelles:list' %}">Gerer les parcelles</a></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Parcelle</th><th>Localisation</th><th>Surface</th><th>Statut</th><th></th></tr></thead><tbody>
+    {% for parcelle in parcelles %}<tr><td>{{ parcelle.name }}</td><td>{{ parcelle.location }}</td><td>{{ parcelle.area|floatformat:1 }} ha</td><td>{{ parcelle.get_status_display }}</td><td><a class="action-link" href="{% url 'parcelles:detail' parcelle.pk %}">Consulter</a></td></tr>
+    {% empty %}<tr><td colspan="5"><div class="empty-state">Aucune parcelle n'est rattachee a cette exploitation.</div></td></tr>{% endfor %}
+  </tbody></table></div>
+</div>
+{% endblock %}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -218,3 +219,19 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+=======
+__pycache__/
+*.py[cod]
+*.sqlite3
+.env
+.env.*
+venv/
+.venv/
+env/
+.env.local
+.pytest_cache/
+*.log
+.DS_Store
+staticfiles/
+media/
+>>>>>>> 802a3bb (Initial commit of AgriGest platform)

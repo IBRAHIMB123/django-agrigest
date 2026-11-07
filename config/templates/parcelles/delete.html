@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block title %}Supprimer la parcelle | AgriGest{% endblock %}
+{% block page_title %}Parcelles{% endblock %}
+{% block content %}<div class="page-card narrow-card"><div class="panel-header"><h1 class="panel-title">Supprimer la parcelle</h1></div><div class="confirmation-body"><p>Voulez-vous vraiment supprimer <strong>{{ parcelle.name }}</strong> ? Cette action est irreversible.</p>{% if can_delete %}<form method="post" data-confirm="Supprimer cette parcelle ?">{% csrf_token %}<button class="danger-btn" type="submit">Confirmer la suppression</button><a class="secondary-btn" href="{% url 'parcelles:detail' parcelle.pk %}">Annuler</a></form>{% else %}<div class="message error">Cette parcelle est liee a des cultures, recoltes ou campagnes. Supprimez ou reaffectez ces donnees avant de supprimer la parcelle.</div><a class="secondary-btn" href="{% url 'parcelles:detail' parcelle.pk %}">Retour</a>{% endif %}</div></div>{% endblock %}
