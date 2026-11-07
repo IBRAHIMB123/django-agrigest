@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Page introuvable | AgriGest{% endblock %}
+{% block auth_content %}
+  <div class="auth-shell">
+    <div class="auth-card status-card">
+      <p class="eyebrow">Erreur 404</p>
+      <h1 class="auth-title">Cette page n'existe pas</h1>
+      <p class="auth-subtitle">Le lien est peut-être ancien, ou l'adresse a été saisie avec une faute.</p>
+      <a class="primary-btn" href="{% url 'dashboard:index' %}">Retour à l'accueil</a>
+    </div>
+  </div>
+{% endblock %}

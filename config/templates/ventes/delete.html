@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Supprimer la vente | AgriGest{% endblock %}
+{% block page_title %}Ventes{% endblock %}
+{% block content %}
+<div class="page-card narrow-card">
+  <div class="panel-header"><h1 class="panel-title">Supprimer la vente</h1></div>
+  <div class="confirmation-body">
+    <p>Supprimer la vente de <strong>{{ vente.product_name }}</strong> du {{ vente.sale_date|date:'d/m/Y' }} ?</p>
+    <form method="post" data-confirm="Supprimer cette vente ?">{% csrf_token %}<a class="secondary-btn" href="{% url 'ventes:list' %}">Annuler</a><button class="danger-btn" type="submit">Supprimer</button></form>
+  </div>
+</div>
+{% endblock %}

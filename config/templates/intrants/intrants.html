@@ -1,50 +1,45 @@
 {% extends 'base.html' %}
-
-{% block title %}Intrants & stock | AgriGest{% endblock %}
-{% block page_title %}Intrants & stock{% endblock %}
-
+{% block title %}Intrants et stock | AgriGest{% endblock %}
+{% block page_title %}Intrants et stock{% endblock %}
 {% block content %}
   <div class="page-card">
     <div class="panel-header">
-      <h2 class="panel-title">Gestion des intrants et du stock</h2>
+      <div>
+        <h2 class="panel-title">Intrants et stock</h2>
+        <p class="panel-description">Semences, engrais et produits, avec les mouvements qui font bouger les quantités.</p>
+      </div>
     </div>
     <div class="data-grid">
-      <div class="form-panel">
-        <h3 class="card-title">Ajouter un intrant</h3>
-        <form method="post" class="form-panel">
+      <section class="form-panel">
+        <h3 class="card-title">Nouvel intrant</h3>
+        <form method="post" class="entry-form">
           {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="primary-btn">Enregistrer</button>
+          {% include 'includes/form_fields.html' with form=form %}
+          <div class="form-actions"><button type="submit" class="primary-btn">Enregistrer l’intrant</button></div>
         </form>
-      </div>
-      <div class="card">
-        <h3 class="card-title">Historique des mouvements</h3>
-        <form method="post" action="{% url 'intrants:movement' %}" class="form-panel">
+      </section>
+      <section class="form-panel">
+        <h3 class="card-title">Mouvement de stock</h3>
+        <p class="side-note">Entrée, sortie ou ajustement. Une sortie ne peut pas dépasser le stock disponible.</p>
+        <form method="post" action="{% url 'intrants:movement' %}" class="entry-form">
           {% csrf_token %}
-          {{ movement_form.as_p }}
-          <button type="submit" class="secondary-btn">Enregistrer le mouvement</button>
+          {% include 'includes/form_fields.html' with form=movement_form %}
+          <div class="form-actions"><button type="submit" class="secondary-btn">Enregistrer le mouvement</button></div>
         </form>
-        <ul style="padding-left: 18px; color: var(--muted); line-height: 1.9; margin-top: 12px;">
+        <ul class="activity-list">
           {% for movement in movements %}
-            <li>{{ movement.intrant.name }} — {{ movement.get_movement_type_display }} ({{ movement.quantity }})</li>
+            <li><span>{{ movement.intrant.name }}</span><strong>{{ movement.get_movement_type_display }} · {{ movement.quantity }}</strong></li>
           {% empty %}
             <li>Aucun mouvement enregistré.</li>
           {% endfor %}
         </ul>
-      </div>
+      </section>
     </div>
-
-    <div style="padding: 0 22px 22px;">
+    <div class="table-card">
       <div class="table-wrap">
         <table>
           <thead>
-            <tr>
-              <th>Intrant</th>
-              <th>Catégorie</th>
-              <th>Quantité</th>
-              <th>Seuil</th>
-              <th>Fournisseur</th>
-            </tr>
+            <tr><th>Intrant</th><th>Catégorie</th><th>Quantité</th><th>Seuil</th><th>Fournisseur</th><th>État</th></tr>
           </thead>
           <tbody>
             {% for intrant in intrants %}
@@ -54,9 +49,10 @@
                 <td>{{ intrant.quantity }} {{ intrant.unit }}</td>
                 <td>{{ intrant.min_stock }} {{ intrant.unit }}</td>
                 <td>{{ intrant.supplier|default:'—' }}</td>
+                <td>{% if intrant.stock_alert %}<span class="list-status badge-alert">Sous le seuil</span>{% else %}<span class="list-status badge-ok">Disponible</span>{% endif %}</td>
               </tr>
             {% empty %}
-              <tr><td colspan="5"><div class="empty-state">Aucun intrant enregistré.</div></td></tr>
+              <tr><td colspan="6"><div class="empty-state"><strong>Stock vide</strong>Ajoutez un premier intrant pour suivre les quantités.</div></td></tr>
             {% endfor %}
           </tbody>
         </table>

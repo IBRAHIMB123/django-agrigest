@@ -1,4 +1,14 @@
 ﻿{% extends 'base.html' %}
 {% block title %}Modifier la campagne | AgriGest{% endblock %}
-{% block page_title %}Modifier une campagne{% endblock %}
-{% block content %}<div class="page-card narrow-card"><div class="panel-header"><h1 class="panel-title">{{ campaign.name }}</h1><a class="secondary-btn" href="{% url 'campaigns:list' %}">Annuler</a></div><div class="data-grid"><form method="post" class="form-panel">{% csrf_token %}{{ form.as_p }}<button class="primary-btn" type="submit">Enregistrer les modifications</button></form></div></div>{% endblock %}
+{% block page_title %}Campagnes{% endblock %}
+{% block content %}
+<div class="page-card narrow-card">
+  <div class="panel-header">
+    <div><h1 class="panel-title">{{ campaign.name }}</h1><p class="panel-description">Ajustez le calendrier ou le statut.</p></div>
+    <a class="secondary-btn" href="{% url 'campaigns:list' %}">Annuler</a>
+  </div>
+  <section class="form-panel">
+    <form method="post" class="entry-form">{% csrf_token %}{% include 'includes/form_fields.html' %}<div class="form-actions"><button class="primary-btn" type="submit">Enregistrer les modifications</button></div></form>
+  </section>
+</div>
+{% endblock %}

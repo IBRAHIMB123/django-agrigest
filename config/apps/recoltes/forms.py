@@ -44,13 +44,24 @@ class RecolteForm(forms.ModelForm):
     class Meta:
         model = Recolte
         fields = ['campaign', 'culture', 'parcelle', 'harvested_date', 'quantity', 'unit', 'yield_per_ha', 'notes']
+        labels = {
+            'campaign': 'Campagne',
+            'culture': 'Culture',
+            'parcelle': 'Parcelle',
+            'harvested_date': 'Date de récolte',
+            'quantity': 'Quantité',
+            'unit': 'Unité',
+            'yield_per_ha': 'Rendement',
+            'notes': 'Notes',
+        }
+        help_texts = {'yield_per_ha': 'Quantité récoltée par hectare, dans la même unité.'}
         widgets = {
             'campaign': forms.Select(attrs={'class': 'form-control'}),
             'culture': forms.Select(attrs={'class': 'form-control'}),
             'parcelle': forms.Select(attrs={'class': 'form-control'}),
             'harvested_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0.01', 'inputmode': 'decimal'}),
             'unit': forms.Select(attrs={'class': 'form-control'}),
-            'yield_per_ha': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'yield_per_ha': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0', 'inputmode': 'decimal'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Qualité, pertes, conditions de récolte'}),
         }

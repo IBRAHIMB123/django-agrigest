@@ -1,43 +1,39 @@
 {% extends 'base.html' %}
-
 {% block title %}Récoltes | AgriGest{% endblock %}
 {% block page_title %}Récoltes{% endblock %}
-
 {% block content %}
   <div class="page-card">
     <div class="panel-header">
-      <h2 class="panel-title">Suivi des récoltes</h2>
+      <div>
+        <h2 class="panel-title">Récoltes</h2>
+        <p class="panel-description">Volumes sortis du champ, rattachés à une culture et, si besoin, à une campagne.</p>
+      </div>
     </div>
     <div class="data-grid">
-      <div class="form-panel">
+      <section class="form-panel">
         <h3 class="card-title">Enregistrer une récolte</h3>
-        <form method="post" class="form-panel">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="primary-btn">Enregistrer</button>
-        </form>
-      </div>
-      <div class="card">
-        <h3 class="card-title">Résumé</h3>
+        <p class="side-note">La parcelle doit être celle de la culture. La date doit rester dans la campagne si vous en choisissez une.</p>
+        <form method="post" class="entry-form">{% csrf_token %}{% include 'includes/form_fields.html' %}<div class="form-actions"><button type="submit" class="primary-btn">Enregistrer la récolte</button></div></form>
+      </section>
+      <aside class="card">
+        <h3 class="card-title">Cumul</h3>
         <div class="summary-box" style="margin-top: 12px;">
           <div class="mini"><div class="label">Récoltes</div><div class="value">{{ recoltes.count }}</div></div>
-          <div class="mini"><div class="label">Tonnes récoltées</div><div class="value">{{ total_tonnes|floatformat:1 }} t</div></div>
+          <div class="mini"><div class="label">Tonnes</div><div class="value">{{ total_tonnes|floatformat:1 }} t</div></div>
         </div>
-      </div>
+      </aside>
     </div>
-
-    <div style="padding: 0 22px 22px;">
+    <form method="get" class="filter-bar">
+      <label class="filter-search"><span>Recherche</span><input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Culture, parcelle ou campagne" /></label>
+      <label><span>Du</span><input class="form-control" type="date" name="from" value="{{ date_from }}" /></label>
+      <label><span>Au</span><input class="form-control" type="date" name="to" value="{{ date_to }}" /></label>
+      <button class="secondary-btn" type="submit">Filtrer</button>
+      {% if query or date_from or date_to %}<a class="action-link" href="{% url 'recoltes:list' %}">Effacer</a>{% endif %}
+    </form>
+    <div class="table-card">
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>Culture</th>
-              <th>Parcelle</th>
-              <th>Date</th>
-              <th>Quantité</th>
-              <th>Rendement</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Culture</th><th>Parcelle</th><th>Date</th><th>Quantité</th><th>Rendement</th><th>Actions</th></tr></thead>
           <tbody>
             {% for recolte in recoltes %}
               <tr>
@@ -46,9 +42,13 @@
                 <td>{{ recolte.harvested_date|date:'d/m/Y' }}</td>
                 <td>{{ recolte.quantity }} {{ recolte.unit }}</td>
                 <td>{{ recolte.yield_per_ha }} {{ recolte.unit }}/ha</td>
+                <td class="table-actions">
+                  <a class="action-link" href="{% url 'recoltes:edit' recolte.pk %}">Modifier</a>
+                  <a class="action-link danger" href="{% url 'recoltes:delete' recolte.pk %}">Supprimer</a>
+                </td>
               </tr>
             {% empty %}
-              <tr><td colspan="5"><div class="empty-state">Aucune récolte enregistrée.</div></td></tr>
+              <tr><td colspan="6"><div class="empty-state"><strong>Aucune récolte</strong>Le premier volume enregistré apparaîtra ici.</div></td></tr>
             {% endfor %}
           </tbody>
         </table>

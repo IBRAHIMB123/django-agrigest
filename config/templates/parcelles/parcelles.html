@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block title %}Parcelles | AgriGest{% endblock %}
 {% block page_title %}Parcelles{% endblock %}
@@ -7,62 +6,34 @@
 {% block content %}
   <div class="page-card">
     <div class="panel-header">
-      <h2 class="panel-title">Gestion des parcelles</h2>
-      <a href="{% url 'dashboard:index' %}" class="secondary-btn">Retour au tableau de bord</a>
+      <div>
+        <h2 class="panel-title">Parcelles</h2>
+        <p class="panel-description">Le découpage de votre exploitation : surface, sol et statut de chaque terrain.</p>
+      </div>
     </div>
     <div class="data-grid">
-      <div class="form-panel">
+      <section class="form-panel">
         <h3 class="card-title">Nouvelle parcelle</h3>
-        <form method="post" class="form-panel">
+        <p class="side-note">Les champs marqués d’un astérisque sont obligatoires.</p>
+        <form method="post" class="entry-form">
           {% csrf_token %}
-          <div class="form-group">
-            <label for="id_name">Nom</label>
-            {{ form.name }}
+          {% include 'includes/form_fields.html' %}
+          <div class="form-actions">
+            <button type="submit" class="primary-btn" data-loading="Enregistrement…">Enregistrer la parcelle</button>
           </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="id_location">Localisation</label>
-              {{ form.location }}
-            </div>
-            <div class="form-group">
-              <label for="id_area">Superficie (ha)</label>
-              {{ form.area }}
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="id_soil_type">Type de sol</label>
-              {{ form.soil_type }}
-            </div>
-            <div class="form-group">
-              <label for="id_status">Statut</label>
-              {{ form.status }}
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="id_description">Description</label>
-            {{ form.description }}
-          </div>
-          <button type="submit" class="primary-btn">Enregistrer</button>
         </form>
-      </div>
-      <div class="card">
-        <h3 class="card-title">Résumé</h3>
+      </section>
+      <aside class="card">
+        <h3 class="card-title">Sur l’exploitation</h3>
         <div class="summary-box" style="margin-top: 12px;">
-          <div class="mini">
-            <div class="label">Parcelles</div>
-            <div class="value">{{ parcelles.count }}</div>
-          </div>
-          <div class="mini">
-            <div class="label">Surface</div>
-            <div class="value">{{ total_area|floatformat:1 }} ha</div>
-          </div>
+          <div class="mini"><div class="label">Parcelles</div><div class="value">{{ parcelles.count }}</div></div>
+          <div class="mini"><div class="label">Surface</div><div class="value">{{ total_area|floatformat:1 }} ha</div></div>
         </div>
-      </div>
+      </aside>
     </div>
 
     <div class="collection-toolbar">
-      <div><strong>{{ parcelles.count }} parcelles</strong><span class="toolbar-caption">{{ total_area|floatformat:1 }} hectares au total</span></div>
+      <div><strong>{{ parcelles.count }} parcelle{{ parcelles.count|pluralize }}</strong><span class="toolbar-caption">{{ total_area|floatformat:1 }} hectares au total</span></div>
       <div class="view-toggle" data-view-set="parcelles" role="group" aria-label="Mode d'affichage">
         <button type="button" data-view-target="cards" class="active" aria-pressed="true">Cartes</button>
         <button type="button" data-view-target="table" aria-pressed="false">Tableau</button>
@@ -70,37 +41,32 @@
     </div>
     <div class="resource-grid" data-view-panel="cards">
       {% for parcelle in parcelles %}
-        <article class="resource-card parcel-card">
-          <div class="resource-image">
-            <img src="{% static 'img/field-maize.webp' %}" alt="Champ agricole" loading="lazy" />
+        <article class="resource-card">
+          <div class="media-band media-field">
+            <strong>{{ parcelle.area|floatformat:1 }} ha</strong>
             <span class="resource-badge">{{ parcelle.get_status_display }}</span>
           </div>
           <div class="resource-content">
             <div class="resource-eyebrow">{{ parcelle.location }}</div>
-            <h3>{{ parcelle.name }}<span>{{ parcelle.area|floatformat:1 }} ha · {{ parcelle.get_soil_type_display }}</span></h3>
+            <h3>{{ parcelle.name }}<span>{{ parcelle.get_soil_type_display }}</span></h3>
             <div class="resource-meta"><span>{% with crop=parcelle.cultures.all|first %}{% if crop %}{{ crop.name }}{% else %}Aucune culture{% endif %}{% endwith %}</span></div>
             <div class="table-actions">
-              <a href="{% url 'parcelles:detail' parcelle.pk %}" class="action-link">Details</a>
+              <a href="{% url 'parcelles:detail' parcelle.pk %}" class="action-link">Détails</a>
               <a href="{% url 'parcelles:edit' parcelle.pk %}" class="action-link">Modifier</a>
               <form method="post" action="{% url 'parcelles:delete' parcelle.pk %}" data-confirm="Supprimer cette parcelle ?">{% csrf_token %}<button type="submit" class="action-link danger">Supprimer</button></form>
             </div>
           </div>
         </article>
       {% empty %}
-        <div class="empty-state resource-empty">Aucune parcelle n'est encore enregistr?e. Cr?ez votre premi?re parcelle pour d?marrer.</div>
+        <div class="empty-state resource-empty"><strong>Aucune parcelle</strong>Enregistrez le premier terrain pour commencer le suivi.</div>
       {% endfor %}
     </div>
-    <div class="table-view" data-view-panel="table" hidden>
+    <div class="table-card table-view" data-view-panel="table" hidden>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Nom</th>
-              <th>Localisation</th>
-              <th>Superficie</th>
-              <th>Sol</th>
-              <th>Statut</th>
-              <th>Actions</th>
+              <th>Nom</th><th>Localisation</th><th>Superficie</th><th>Sol</th><th>Statut</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -118,7 +84,7 @@
                 </td>
               </tr>
             {% empty %}
-              <tr><td colspan="6"><div class="empty-state">Aucune parcelle n'a été créée.</div></td></tr>
+              <tr><td colspan="6"><div class="empty-state">Aucune parcelle n’a été créée.</div></td></tr>
             {% endfor %}
           </tbody>
         </table>

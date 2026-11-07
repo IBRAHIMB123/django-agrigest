@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Supprimer la récolte | AgriGest{% endblock %}
+{% block page_title %}Récoltes{% endblock %}
+{% block content %}
+<div class="page-card narrow-card">
+  <div class="panel-header"><h1 class="panel-title">Supprimer la récolte</h1></div>
+  <div class="confirmation-body">
+    <p>Supprimer {{ recolte.quantity }} {{ recolte.unit }} enregistrés le {{ recolte.harvested_date|date:'d/m/Y' }} ?</p>
+    <form method="post" data-confirm="Supprimer cette récolte ?">{% csrf_token %}<a class="secondary-btn" href="{% url 'recoltes:list' %}">Annuler</a><button class="danger-btn" type="submit">Supprimer</button></form>
+  </div>
+</div>
+{% endblock %}

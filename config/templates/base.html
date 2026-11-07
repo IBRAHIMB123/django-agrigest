@@ -4,15 +4,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#103628" />
+    <meta name="theme-color" content="#183D32" />
     <script>try{document.documentElement.dataset.theme=localStorage.getItem('agrigest-theme')||'light'}catch(e){document.documentElement.dataset.theme='light'}</script>
     <title>{% block title %}AgriGest{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20261106-r4" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20261107-ux" />
   </head>
   <body>
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
     {% if user.is_authenticated %}
       <div class="shell">
         <button class="sidebar-backdrop" type="button" data-close-menu aria-label="Fermer le menu"></button>
@@ -20,11 +21,11 @@
           <div class="sidebar-header">
             <a class="brand-wrap" href="{% url 'dashboard:index' %}" aria-label="AgriGest, accueil">
               <span class="brand-mark" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 20V11m0 3c-4.4 0-7-2.4-7-6.5C9.2 7.5 12 9.7 12 14Zm0-2c0-4.1 2.6-6.7 7-7-.1 4.3-2.7 7-7 7Z" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 20V10m0 4c-4.2 0-6.5-2.2-6.5-6 4 .2 6.5 2.4 6.5 6Zm0-2c0-3.8 2.4-6.2 6.5-6.4C18.4 11.8 16 14 12 14Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
               <span>
                 <span class="brand-name">AgriGest</span>
-                <span class="brand-sub">Gestion agricole</span>
+                <span class="brand-sub">Pilotage d'exploitation</span>
               </span>
             </a>
           </div>
@@ -36,30 +37,65 @@
                 {% for farm in farms %}<option value="{% url 'accounts:farm_activate' farm.pk %}" {% if farm.pk == active_farm.pk %}selected{% endif %}>{{ farm.name }}</option>{% endfor %}
               </select>
             </form>
-            <a href="{% url 'accounts:farms' %}">Gerer les exploitations</a>
+            <a href="{% url 'accounts:farms' %}">Gérer les exploitations</a>
           </div>
 
           <nav class="nav-group" aria-label="Navigation principale">
-            <div class="section-label">Votre exploitation</div>
-            <a class="nav-link {% if request.resolver_match.namespace == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:index' %}"><span class="icon">TB</span>Tableau de bord</a>
-            <a class="nav-link {% if request.path == '/accounts/farms/' or request.resolver_match.url_name == 'farm_detail' %}active{% endif %}" href="{% url 'accounts:farms' %}"><span class="icon">EX</span>Exploitations</a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'parcelles' %}active{% endif %}" href="{% url 'parcelles:list' %}"><span class="icon">PA</span>Parcelles</a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'cultures' %}active{% endif %}" href="{% url 'cultures:list' %}"><span class="icon">CU</span>Cultures</a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'campaigns' %}active{% endif %}" href="{% url 'campaigns:list' %}"><span class="icon">CA</span>Campagnes</a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'intrants' %}active{% endif %}" href="{% url 'intrants:list' %}"><span class="icon">ST</span>Intrants et stock</a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'recoltes' %}active{% endif %}" href="{% url 'recoltes:list' %}"><span class="icon">RC</span>RÃ©coltes</a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'depenses' %}active{% endif %}" href="{% url 'depenses:list' %}"><span class="icon">DE</span>DÃ©penses</a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'ventes' %}active{% endif %}" href="{% url 'ventes:list' %}"><span class="icon">VE</span>Ventes</a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'rapports' %}active{% endif %}" href="{% url 'rapports:index' %}"><span class="icon">RP</span>Rapports</a>
+            <div class="section-label">Exploitation</div>
+            <a class="nav-link {% if request.resolver_match.namespace == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:index' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+              Tableau de bord
+            </a>
+            <a class="nav-link {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name != 'profile' %}active{% endif %}" href="{% url 'accounts:farms' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 20v-6h6v6" stroke="currentColor" stroke-width="1.7"/></svg>
+              Exploitations
+            </a>
+            <a class="nav-link {% if request.resolver_match.namespace == 'parcelles' %}active{% endif %}" href="{% url 'parcelles:list' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Parcelles
+            </a>
+            <a class="nav-link {% if request.resolver_match.namespace == 'cultures' %}active{% endif %}" href="{% url 'cultures:list' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21V10m0 3c-4 0-6.2-2-6.2-5.6C9.6 7.4 12 9.4 12 13Zm0-1.5c0-3.6 2.2-6 6.2-6.3-.2 3.8-2.4 6.3-6.2 6.3Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Cultures
+            </a>
+            <a class="nav-link {% if request.resolver_match.namespace == 'campaigns' %}active{% endif %}" href="{% url 'campaigns:list' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 3v4M16 3v4M4 10h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Campagnes
+            </a>
+            <div class="section-label">Opérations</div>
+            <a class="nav-link {% if request.resolver_match.namespace == 'intrants' %}active{% endif %}" href="{% url 'intrants:list' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 7h8l1 13H7L8 7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 7a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.7"/></svg>
+              Intrants et stock
+            </a>
+            <a class="nav-link {% if request.resolver_match.namespace == 'recoltes' %}active{% endif %}" href="{% url 'recoltes:list' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v8m0 0c-3.5 0-6 2-6 5.5S8.5 21 12 21s6-1.8 6-4.5S15.5 11 12 11Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Récoltes
+            </a>
+            <a class="nav-link {% if request.resolver_match.namespace == 'depenses' %}active{% endif %}" href="{% url 'depenses:list' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7h14v11H5z" stroke="currentColor" stroke-width="1.7"/><path d="M8 7V5h8v2M12 11v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Dépenses
+            </a>
+            <a class="nav-link {% if request.resolver_match.namespace == 'ventes' %}active{% endif %}" href="{% url 'ventes:list' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z" stroke="currentColor" stroke-width="1.7"/><path d="M9 7a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.7"/></svg>
+              Ventes
+            </a>
+            <a class="nav-link {% if request.resolver_match.namespace == 'rapports' %}active{% endif %}" href="{% url 'rapports:index' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V9M12 19V5M19 19v-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Rapports
+            </a>
           </nav>
 
           <div class="sidebar-footer">
-            <div class="user-chip">
+            <a class="user-chip" href="{% url 'accounts:profile' %}">
               <span class="avatar" aria-hidden="true">{{ user.username|slice:":1"|upper }}</span>
               <span>
                 <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
-                <span class="user-role">Espace de travail</span>
+                <span class="user-role">{{ active_farm.name }}</span>
               </span>
+            </a>
+            <div class="sidebar-links">
+              <a href="{% url 'accounts:profile' %}">Profil</a>
+              <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit">Déconnexion</button></form>
             </div>
           </div>
         </aside>
@@ -71,17 +107,16 @@
             </button>
             <div class="page-title">{% block page_title %}Tableau de bord{% endblock %}</div>
             <form class="search-form" method="get" action="{% url 'dashboard:search' %}" role="search">
-              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.3 4.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-              <input type="search" name="q" placeholder="Rechercher dans l'exploitation" aria-label="Rechercher parcelles, cultures et rÃ©coltes" value="{{ request.GET.q|default:'' }}" data-global-search />
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              <input type="search" name="q" placeholder="Parcelles, cultures, récoltes" aria-label="Rechercher dans l'exploitation" value="{{ request.GET.q|default:'' }}" data-global-search />
               <span class="search-shortcut" data-search-shortcut>Ctrl K</span>
             </form>
             <div class="top-actions">
-              <button type="button" class="secondary-btn theme-toggle" data-theme-toggle aria-label="Activer le theme sombre" aria-pressed="false"><span data-theme-icon aria-hidden="true">â—</span><span data-theme-label>Theme</span></button>
-              <a href="{% url 'accounts:profile' %}" class="secondary-btn">Mon profil</a>
-              <form method="post" action="{% url 'accounts:logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="primary-btn">DÃ©connexion</button>
-              </form>
+              <button type="button" class="icon-button theme-toggle" data-theme-toggle aria-label="Activer le thème sombre" aria-pressed="false">
+                <span data-theme-icon aria-hidden="true">◐</span>
+                <span class="visually-hidden" data-theme-label>Thème</span>
+              </button>
+              <a href="{% url 'accounts:profile' %}" class="secondary-btn">Profil</a>
             </div>
           </header>
 
@@ -93,7 +128,7 @@
             </div>
           {% endif %}
 
-          <main class="page-shell">
+          <main class="page-shell" id="contenu">
             {% block content %}{% endblock %}
           </main>
         </div>
@@ -105,13 +140,12 @@
     <dialog class="confirm-dialog" data-confirm-dialog aria-labelledby="confirm-title">
       <div class="confirm-mark" aria-hidden="true">!</div>
       <h2 id="confirm-title">Confirmer la suppression</h2>
-      <p data-confirm-copy>Cette action ne peut pas etre annulee.</p>
+      <p data-confirm-copy>Cette action ne peut pas être annulée.</p>
       <div class="confirm-actions">
         <form method="dialog"><button type="submit" class="secondary-btn">Annuler</button></form>
         <button type="button" class="danger-btn" data-confirm-accept>Supprimer</button>
       </div>
     </dialog>
-    <script src="{% static 'js/app.js' %}?v=20261106-r4" defer></script>
+    <script src="{% static 'js/app.js' %}?v=20261107-ux" defer></script>
   </body>
 </html>
-

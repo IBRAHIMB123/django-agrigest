@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# django-agrigest
-AgriGest est une application de gestion agricole permettant aux exploitants de suivre et gérer efficacement leurs parcelles, cultures, intrants, récoltes, dépenses et ventes. Le projet vise à simplifier la gestion quotidienne des exploitations agricoles grâce à une solution numérique centralisée, pratique et intuitive.
-=======
 # AgriGest
 
 AgriGest is a premium Django-based agricultural management platform for farms and cooperatives. It centralizes parcel management, crop tracking, inventory, harvests, expenses, sales, and reporting in a single professional workspace.
@@ -126,4 +122,3 @@ The included `seed_demo_data` command populates a sample farm with realistic agr
 ## Validation
 
 The project has been checked with Django system checks and test suite execution.
->>>>>>> 802a3bb (Initial commit of AgriGest platform)

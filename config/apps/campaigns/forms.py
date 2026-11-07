@@ -30,8 +30,16 @@ class CampaignForm(forms.ModelForm):
     class Meta:
         model = Campaign
         fields = ['name', 'parcelle', 'culture', 'start_date', 'end_date', 'status']
+        labels = {
+            'name': 'Nom de la campagne',
+            'parcelle': 'Parcelle',
+            'culture': 'Culture',
+            'start_date': 'Début',
+            'end_date': 'Fin',
+            'status': 'Statut',
+        }
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. Hivernage 2026'}),
             'parcelle': forms.Select(attrs={'class': 'form-control'}),
             'culture': forms.Select(attrs={'class': 'form-control'}),
             'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),

@@ -66,6 +66,29 @@ document.addEventListener('DOMContentLoaded', function () {
     close.textContent = '×';
     close.addEventListener('click', () => message.remove());
     message.append(close);
+    window.setTimeout(() => message.remove(), 6000);
+  });
+
+  document.querySelectorAll('table').forEach((table) => {
+    const headers = [...table.querySelectorAll('thead th')].map((th) => th.textContent.trim());
+    table.querySelectorAll('tbody tr').forEach((row) => {
+      [...row.children].forEach((cell, index) => {
+        if (headers[index] && !cell.hasAttribute('colspan')) cell.dataset.label = headers[index];
+      });
+    });
+  });
+
+  document.querySelectorAll('form').forEach((form) => {
+    form.addEventListener('submit', () => {
+      if (form.hasAttribute('data-confirm') && form.dataset.confirmed !== 'true') return;
+      const button = form.querySelector('[type="submit"]');
+      if (!button || button.classList.contains('is-loading')) return;
+      button.classList.add('is-loading');
+      button.setAttribute('aria-busy', 'true');
+      const label = button.dataset.loading || 'Enregistrement…';
+      button.dataset.label = button.textContent;
+      button.textContent = label;
+    });
   });
 
   document.querySelectorAll('[data-view-set]').forEach((group) => {

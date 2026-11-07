@@ -26,10 +26,18 @@ class DepenseForm(forms.ModelForm):
     class Meta:
         model = Depense
         fields = ['campaign', 'category', 'amount', 'date', 'description']
+        labels = {
+            'campaign': 'Campagne',
+            'category': 'Catégorie',
+            'amount': 'Montant',
+            'date': 'Date',
+            'description': 'Description',
+        }
+        help_texts = {'amount': 'Montant en FCFA.'}
         widgets = {
             'campaign': forms.Select(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
-            'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0.01', 'inputmode': 'decimal', 'placeholder': '0'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'À quoi correspond cette dépense ?'}),
         }

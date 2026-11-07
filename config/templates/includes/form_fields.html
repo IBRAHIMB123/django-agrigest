@@ -1,0 +1,19 @@
+{% if form.non_field_errors %}
+  <div class="form-alert" role="alert">
+    {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+  </div>
+{% endif %}
+<div class="fields">
+  {% for field in form.visible_fields %}
+    <div class="field{% if field.name == 'description' or field.name == 'notes' %} field-wide{% endif %}{% if field.errors %} is-invalid{% endif %}">
+      <label for="{{ field.id_for_label }}">
+        {{ field.label }}
+        {% if field.field.required %}<abbr class="req" title="Obligatoire">*</abbr>{% else %}<span class="optional">facultatif</span>{% endif %}
+      </label>
+      {{ field }}
+      {% if field.help_text %}<small class="hint">{{ field.help_text|safe }}</small>{% endif %}
+      {% for error in field.errors %}<small class="error" role="alert">{{ error }}</small>{% endfor %}
+    </div>
+  {% endfor %}
+</div>
+{% for field in form.hidden_fields %}{{ field }}{% endfor %}

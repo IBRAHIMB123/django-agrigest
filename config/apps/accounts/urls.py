@@ -2,14 +2,14 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from .forms import StyledAuthenticationForm
-from .views import profile_view, signup_view
+from .views import logout_view, profile_view, signup_view
 from .farm_views import farm_activate, farm_delete, farm_detail, farm_edit, farm_list
 
 app_name = 'accounts'
 
 urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html', authentication_form=StyledAuthenticationForm, redirect_authenticated_user=True), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='accounts:login'), name='logout'),
+    path('logout/', logout_view, name='logout'),
     path('signup/', signup_view, name='signup'),
     path('profile/', profile_view, name='profile'),
     path('farms/', farm_list, name='farms'),

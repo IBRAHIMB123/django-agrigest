@@ -8,10 +8,11 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ['name', 'phone', 'email']
+        labels = {'name': 'Nom', 'phone': 'Téléphone', 'email': 'Email'}
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du client'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+223 …', 'inputmode': 'tel'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'client@exemple.com'}),
         }
 
 
@@ -42,12 +43,22 @@ class VenteForm(forms.ModelForm):
     class Meta:
         model = Vente
         fields = ['campaign', 'client', 'product_name', 'quantity', 'unit_price', 'sale_date', 'notes']
+        labels = {
+            'campaign': 'Campagne',
+            'client': 'Client',
+            'product_name': 'Produit',
+            'quantity': 'Quantité',
+            'unit_price': 'Prix unitaire',
+            'sale_date': 'Date de vente',
+            'notes': 'Notes',
+        }
+        help_texts = {'unit_price': 'Prix en FCFA. Le total est calculé automatiquement.'}
         widgets = {
             'campaign': forms.Select(attrs={'class': 'form-control'}),
             'client': forms.Select(attrs={'class': 'form-control'}),
-            'product_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'unit_price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'product_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Produit vendu'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0.01', 'inputmode': 'decimal'}),
+            'unit_price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0', 'inputmode': 'decimal'}),
             'sale_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Conditions de vente, acompte, livraison'}),
         }

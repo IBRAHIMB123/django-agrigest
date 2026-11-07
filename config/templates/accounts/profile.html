@@ -7,7 +7,10 @@
   <div class="page-card">
     <div class="panel-header">
       <h2 class="panel-title">Profil de l'exploitation</h2>
-      <a href="{% url 'accounts:logout' %}" class="ghost-btn">Se déconnecter</a>
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="ghost-btn">Se déconnecter</button>
+      </form>
     </div>
     <div class="data-grid">
       <div>

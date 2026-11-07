@@ -1,53 +1,42 @@
 {% extends 'base.html' %}
-
 {% block title %}Ventes | AgriGest{% endblock %}
 {% block page_title %}Ventes{% endblock %}
-
 {% block content %}
   <div class="page-card">
     <div class="panel-header">
-      <h2 class="panel-title">Gestion des ventes</h2>
+      <div>
+        <h2 class="panel-title">Ventes</h2>
+        <p class="panel-description">Clients, quantités et prix. Le montant total est calculé à l’enregistrement.</p>
+      </div>
     </div>
     <div class="data-grid">
-      <div class="form-panel">
+      <section class="form-panel">
         <h3 class="card-title">Enregistrer une vente</h3>
-        <form method="post" class="form-panel">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="primary-btn">Enregistrer</button>
-        </form>
-      </div>
-      <div class="card">
-        <h3 class="card-title">Clients</h3>
-        <form method="post" action="{% url 'ventes:client_create' %}" class="form-panel">
-          {% csrf_token %}
-          {{ client_form.as_p }}
-          <button type="submit" class="secondary-btn">Ajouter un client</button>
-        </form>
-        <ul style="padding-left: 18px; color: var(--muted); line-height: 1.9; margin-top: 12px;">
+        <form method="post" class="entry-form">{% csrf_token %}{% include 'includes/form_fields.html' with form=form %}<div class="form-actions"><button type="submit" class="primary-btn">Enregistrer la vente</button></div></form>
+      </section>
+      <section class="form-panel">
+        <h3 class="card-title">Nouveau client</h3>
+        <form method="post" action="{% url 'ventes:client_create' %}" class="entry-form">{% csrf_token %}{% include 'includes/form_fields.html' with form=client_form %}<div class="form-actions"><button type="submit" class="secondary-btn">Ajouter le client</button></div></form>
+        <ul class="activity-list">
           {% for client in clients %}
-            <li>{{ client.name }} — {{ client.phone|default:'—' }}</li>
+            <li><span>{{ client.name }}</span><span>{{ client.phone|default:'—' }}</span></li>
           {% empty %}
-            <li>Aucun client enregistré.</li>
+            <li>Aucun client pour le moment.</li>
           {% endfor %}
         </ul>
-      </div>
+      </section>
     </div>
-
-    <form method="get" class="filter-bar"><label class="filter-search"><span>Rechercher une vente</span><input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Produit, client ou campagne" /></label><button class="secondary-btn" type="submit">Rechercher</button>{% if query %}<a class="action-link" href="{% url 'ventes:list' %}">Effacer</a>{% endif %}</form>
-    <div style="padding: 0 22px 22px;">
+    <form method="get" class="filter-bar">
+      <label class="filter-search"><span>Recherche</span><input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Produit, client ou campagne" /></label>
+      <label><span>Du</span><input class="form-control" type="date" name="from" value="{{ date_from }}" /></label>
+      <label><span>Au</span><input class="form-control" type="date" name="to" value="{{ date_to }}" /></label>
+      <button class="secondary-btn" type="submit">Filtrer</button>
+      {% if query or date_from or date_to %}<a class="action-link" href="{% url 'ventes:list' %}">Effacer</a>{% endif %}
+    </form>
+    <div class="table-card">
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>Produit</th>
-              <th>Client</th>
-              <th>Quantité</th>
-              <th>Prix unitaire</th>
-              <th>Total</th>
-              <th>Campagne</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Produit</th><th>Client</th><th>Quantité</th><th>Prix unitaire</th><th>Total</th><th>Campagne</th></tr></thead>
           <tbody>
             {% for vente in ventes %}
               <tr>
@@ -56,10 +45,10 @@
                 <td>{{ vente.quantity }}</td>
                 <td>{{ vente.unit_price }} FCFA</td>
                 <td>{{ vente.total_amount }} FCFA</td>
-                <td>{{ vente.campaign.name|default:'-' }}</td>
+                <td>{{ vente.campaign.name|default:'—' }}</td>
               </tr>
             {% empty %}
-              <tr><td colspan="6"><div class="empty-state">Aucune vente enregistrée.</div></td></tr>
+              <tr><td colspan="6"><div class="empty-state"><strong>Aucune vente</strong>{% if query %}Aucun résultat pour cette recherche.{% else %}La première vente apparaîtra dans ce registre.{% endif %}</div></td></tr>
             {% endfor %}
           </tbody>
         </table>
