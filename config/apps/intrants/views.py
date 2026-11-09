@@ -3,13 +3,16 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import redirect, render
 
+from apps.accounts.decorators import roles_required
 from apps.accounts.models import get_or_create_farm_profile
+from apps.accounts.models import FarmProfile
 
 from .forms import IntrantForm, MouvementStockForm
 from .models import Intrant, MouvementStock
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def intrant_list(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     intrants = Intrant.objects.filter(farm=farm).order_by('-created_at')
@@ -33,6 +36,7 @@ def intrant_list(request):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def movement_record(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     if request.method != 'POST':

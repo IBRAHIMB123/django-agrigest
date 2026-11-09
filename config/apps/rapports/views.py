@@ -8,6 +8,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
+from apps.accounts.decorators import roles_required
+from apps.accounts.models import FarmProfile
 from apps.accounts.models import get_or_create_farm_profile
 from apps.depenses.models import Depense
 from apps.ventes.models import Vente
@@ -25,6 +27,7 @@ except Exception:  # pragma: no cover
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN)
 def rapport_index(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     period = request.GET.get('period', '30')
@@ -52,6 +55,7 @@ def rapport_index(request):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN)
 def export_csv(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     period = request.GET.get('period', '30')
@@ -71,6 +75,7 @@ def export_csv(request):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN)
 def export_pdf(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     period = request.GET.get('period', '30')

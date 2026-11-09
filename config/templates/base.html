@@ -10,11 +10,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20261107-ux" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20261110-marketplace" />
+    {% block extra_head %}{% endblock %}
   </head>
   <body>
     <a class="skip-link" href="#contenu">Aller au contenu</a>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and not is_public_page %}
       <div class="shell">
         <button class="sidebar-backdrop" type="button" data-close-menu aria-label="Fermer le menu"></button>
         <aside class="sidebar" id="main-navigation">
@@ -31,13 +32,17 @@
           </div>
           <div class="sidebar-farm">
             <span class="sidebar-farm-label">Exploitation active</span>
-            <form method="post" action="{% url 'accounts:farm_activate' active_farm.pk %}">
-              {% csrf_token %}
-              <select aria-label="Choisir une exploitation" name="farm_id" onchange="this.form.action=this.value;this.form.submit()">
-                {% for farm in farms %}<option value="{% url 'accounts:farm_activate' farm.pk %}" {% if farm.pk == active_farm.pk %}selected{% endif %}>{{ farm.name }}</option>{% endfor %}
-              </select>
-            </form>
-            <a href="{% url 'accounts:farms' %}">Gérer les exploitations</a>
+            {% if user_role == 'admin' %}
+              <form method="post" action="{% url 'accounts:farm_activate' active_farm.pk %}">
+                {% csrf_token %}
+                <select aria-label="Choisir une exploitation" name="farm_id" onchange="this.form.action=this.value;this.form.submit()">
+                  {% for farm in farms %}<option value="{% url 'accounts:farm_activate' farm.pk %}" {% if farm.pk == active_farm.pk %}selected{% endif %}>{{ farm.name }}</option>{% endfor %}
+                </select>
+              </form>
+              <a href="{% url 'accounts:farms' %}">Gérer les exploitations</a>
+            {% else %}
+              <strong>{{ active_farm.name }}</strong>
+            {% endif %}
           </div>
 
           <nav class="nav-group" aria-label="Navigation principale">
@@ -46,43 +51,68 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
               Tableau de bord
             </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name != 'profile' %}active{% endif %}" href="{% url 'accounts:farms' %}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 20v-6h6v6" stroke="currentColor" stroke-width="1.7"/></svg>
-              Exploitations
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'parcelles' %}active{% endif %}" href="{% url 'parcelles:list' %}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-              Parcelles
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'cultures' %}active{% endif %}" href="{% url 'cultures:list' %}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21V10m0 3c-4 0-6.2-2-6.2-5.6C9.6 7.4 12 9.4 12 13Zm0-1.5c0-3.6 2.2-6 6.2-6.3-.2 3.8-2.4 6.3-6.2 6.3Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-              Cultures
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'campaigns' %}active{% endif %}" href="{% url 'campaigns:list' %}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 3v4M16 3v4M4 10h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-              Campagnes
-            </a>
-            <div class="section-label">Opérations</div>
-            <a class="nav-link {% if request.resolver_match.namespace == 'intrants' %}active{% endif %}" href="{% url 'intrants:list' %}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 7h8l1 13H7L8 7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 7a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.7"/></svg>
-              Intrants et stock
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'recoltes' %}active{% endif %}" href="{% url 'recoltes:list' %}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v8m0 0c-3.5 0-6 2-6 5.5S8.5 21 12 21s6-1.8 6-4.5S15.5 11 12 11Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-              Récoltes
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'depenses' %}active{% endif %}" href="{% url 'depenses:list' %}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7h14v11H5z" stroke="currentColor" stroke-width="1.7"/><path d="M8 7V5h8v2M12 11v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-              Dépenses
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'ventes' %}active{% endif %}" href="{% url 'ventes:list' %}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z" stroke="currentColor" stroke-width="1.7"/><path d="M9 7a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.7"/></svg>
-              Ventes
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'rapports' %}active{% endif %}" href="{% url 'rapports:index' %}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V9M12 19V5M19 19v-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-              Rapports
-            </a>
+            {% if user_role == 'admin' %}
+              <a class="nav-link {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name != 'profile' %}active{% endif %}" href="{% url 'accounts:farms' %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 20v-6h6v6" stroke="currentColor" stroke-width="1.7"/></svg>
+                Exploitations
+              </a>
+            {% endif %}
+
+            {% if user_role != 'client' %}
+              <a class="nav-link {% if request.resolver_match.namespace == 'parcelles' %}active{% endif %}" href="{% url 'parcelles:list' %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                Parcelles
+              </a>
+              <a class="nav-link {% if request.resolver_match.namespace == 'cultures' %}active{% endif %}" href="{% url 'cultures:list' %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21V10m0 3c-4 0-6.2-2-6.2-5.6C9.6 7.4 12 9.4 12 13Zm0-1.5c0-3.6 2.2-6 6.2-6.3-.2 3.8-2.4 6.3-6.2 6.3Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                Cultures
+              </a>
+              <a class="nav-link {% if request.resolver_match.namespace == 'campaigns' %}active{% endif %}" href="{% url 'campaigns:list' %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 3v4M16 3v4M4 10h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                Campagnes
+              </a>
+            {% endif %}
+
+            {% if user_role != 'client' %}
+              <div class="section-label">Opérations</div>
+            {% endif %}
+            {% if user_role != 'client' %}
+              <a class="nav-link {% if request.resolver_match.namespace == 'intrants' %}active{% endif %}" href="{% url 'intrants:list' %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 7h8l1 13H7L8 7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 7a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.7"/></svg>
+                Intrants et stock
+              </a>
+            {% endif %}
+            {% if user_role != 'client' %}
+              <a class="nav-link {% if request.resolver_match.namespace == 'recoltes' %}active{% endif %}" href="{% url 'recoltes:list' %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v8m0 0c-3.5 0-6 2-6 5.5S8.5 21 12 21s6-1.8 6-4.5S15.5 11 12 11Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                Récoltes
+              </a>
+            {% endif %}
+            {% if user_role == 'admin' %}
+              <a class="nav-link {% if request.resolver_match.namespace == 'depenses' %}active{% endif %}" href="{% url 'depenses:list' %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7h14v11H5z" stroke="currentColor" stroke-width="1.7"/><path d="M8 7V5h8v2M12 11v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                Dépenses
+              </a>
+            {% endif %}
+            {% if user_role != 'worker' %}
+              {% if user_role == 'admin' %}
+                <a class="nav-link {% if request.resolver_match.namespace == 'ventes' and request.resolver_match.url_name == 'list' %}active{% endif %}" href="{% url 'ventes:list' %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z" stroke="currentColor" stroke-width="1.7"/><path d="M9 7a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.7"/></svg>
+                Registre des ventes
+                </a>
+                <a class="nav-link {% if request.resolver_match.url_name == 'listings' or request.resolver_match.url_name == 'listing_edit' %}active{% endif %}" href="{% url 'ventes:listings' %}">Mes annonces</a>
+                <a class="nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %}" href="{% url 'ventes:orders' %}">Commandes reçues</a>
+              {% else %}
+                <a class="nav-link {% if request.resolver_match.url_name == 'marketplace' %}active{% endif %}" href="{% url 'ventes:marketplace' %}">Boutique agricole</a>
+                <a class="nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %}" href="{% url 'ventes:orders' %}">Mes commandes</a>
+              {% endif %}
+            {% endif %}
+            {% if user_role == 'admin' %}
+              <a class="nav-link {% if request.resolver_match.namespace == 'rapports' %}active{% endif %}" href="{% url 'rapports:index' %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V9M12 19V5M19 19v-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                Rapports
+              </a>
+            {% endif %}
           </nav>
 
           <div class="sidebar-footer">
@@ -90,7 +120,7 @@
               <span class="avatar" aria-hidden="true">{{ user.username|slice:":1"|upper }}</span>
               <span>
                 <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
-                <span class="user-role">{{ active_farm.name }}</span>
+                <span class="user-role">{{ user_role_label|default:active_farm.name }}</span>
               </span>
             </a>
             <div class="sidebar-links">
@@ -106,11 +136,11 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
             </button>
             <div class="page-title">{% block page_title %}Tableau de bord{% endblock %}</div>
-            <form class="search-form" method="get" action="{% url 'dashboard:search' %}" role="search">
+            {% if user_role != 'client' %}<form class="search-form" method="get" action="{% url 'dashboard:search' %}" role="search">
               <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
               <input type="search" name="q" placeholder="Parcelles, cultures, récoltes" aria-label="Rechercher dans l'exploitation" value="{{ request.GET.q|default:'' }}" data-global-search />
               <span class="search-shortcut" data-search-shortcut>Ctrl K</span>
-            </form>
+            </form>{% endif %}
             <div class="top-actions">
               <button type="button" class="icon-button theme-toggle" data-theme-toggle aria-label="Activer le thème sombre" aria-pressed="false">
                 <span data-theme-icon aria-hidden="true">◐</span>
@@ -134,7 +164,7 @@
         </div>
       </div>
     {% else %}
-      {% block auth_content %}{% endblock %}
+      {% block public_content %}{% block auth_content %}{% endblock %}{% endblock %}
     {% endif %}
 
     <dialog class="confirm-dialog" data-confirm-dialog aria-labelledby="confirm-title">
@@ -146,6 +176,6 @@
         <button type="button" class="danger-btn" data-confirm-accept>Supprimer</button>
       </div>
     </dialog>
-    <script src="{% static 'js/app.js' %}?v=20261107-ux" defer></script>
+    <script src="{% static 'js/app.js' %}?v=20261109-site" defer></script>
   </body>
 </html>

@@ -1,0 +1,82 @@
+<div class="agri-dashboard agri-dashboard--worker">
+  <header class="agri-dashboard-hero">
+    <div class="agri-dashboard-cover"></div>
+    <div class="agri-dashboard-topline">
+      <a class="agri-dashboard-home" href="{% url 'dashboard:home' %}" aria-label="Retour à l'accueil AgriGest"><span class="agri-dashboard-logo" aria-hidden="true">A</span><span>AGRIGEST <small>ESPACE TERRAIN</small></span></a>
+      <span class="agri-live"><span></span> Suivi opérationnel</span>
+      <a class="agri-dashboard-profile" href="{% url 'accounts:profile' %}">Mon profil <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="agri-dashboard-intro">
+      <p class="agri-eyebrow">VOTRE JOURNÉE TERRAIN · {{ today|date:"d F Y" }}</p>
+      <h1 id="dashboard-heading">Bonjour {{ user.first_name|default:user.username }}<br /><em>on avance ensemble.</em></h1>
+      <p>Les opérations prioritaires et les récoltes de {{ farm.name }}.</p>
+    </div>
+    <div class="agri-dashboard-farm"><span class="agri-farm-mark" aria-hidden="true">⌖</span><span><small>EXPLOITATION</small><strong>{{ farm.name }}</strong></span>{% if farm.location %}<span class="agri-farm-location">{{ farm.location }}</span>{% endif %}</div>
+  </header>
+
+  <div class="agri-dashboard-board">
+    <section class="agri-glass-panel agri-finance-panel" aria-labelledby="field-heading">
+      <div class="agri-panel-heading"><span id="field-heading">Repères terrain</span><span aria-hidden="true">✳</span></div>
+      <article class="agri-finance-metric"><span>Cultures actives</span><strong>{{ active_crops }} <small>cultures</small></strong><small>Sur {{ parcels.count }} parcelle(s)</small></article>
+      <article class="agri-finance-metric"><span>Campagnes à suivre</span><strong>{{ active_campaign_count }} <small>en cours</small></strong><small>Progression des opérations</small></article>
+      <article class="agri-finance-metric agri-finance-metric--result"><span>Surface terrain</span><strong>{{ total_area|floatformat:1 }} <small>ha</small></strong><small>{{ farm.location|default:'Surface enregistrée' }}</small></article>
+      <a class="agri-panel-link" href="{% url 'cultures:list' %}">Consulter les cultures <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="agri-glass-panel agri-operations-panel" aria-labelledby="operations-heading">
+      <div class="agri-panel-heading"><span id="operations-heading">Interventions en cours</span><a href="{% url 'campaigns:list' %}" aria-label="Voir les campagnes">↗</a></div>
+      <div class="agri-campaign-list">
+        {% for campaign in active_campaigns %}
+          <article class="agri-campaign-card">
+            <div class="agri-campaign-card-top"><span class="agri-campaign-icon" aria-hidden="true">✳</span><span class="agri-campaign-status">EN COURS</span></div>
+            <strong>{{ campaign.name }}</strong>
+            <p>{{ campaign.culture.name }} · {{ campaign.parcelle.name }}</p>
+            <div class="agri-progress"><span style="width:{{ campaign.progress }}%"></span></div>
+            <div class="agri-progress-label"><span>Avancement</span><b>{{ campaign.progress }}%</b></div>
+          </article>
+        {% empty %}
+          <div class="agri-operation-empty"><span aria-hidden="true">✳</span><strong>Votre prochaine intervention commence ici.</strong><p>Aucune campagne active pour le moment.</p><a href="{% url 'campaigns:list' %}">Voir les campagnes <span aria-hidden="true">↗</span></a></div>
+        {% endfor %}
+      </div>
+      <div class="agri-production-footer"><span>{{ harvest_this_month|floatformat:1 }} T récoltée(s) ce mois</span><a href="{% url 'recoltes:list' %}">Ouvrir les récoltes <span aria-hidden="true">→</span></a></div>
+    </section>
+
+    <aside class="agri-dashboard-aside">
+      <section class="agri-glass-panel agri-aside-stat">
+        <div class="agri-panel-heading"><span>Stock à surveiller</span><span class="agri-alert-count">{{ low_stock|length }}</span></div>
+        {% if low_stock %}
+          {% for item in low_stock|slice:":3" %}<div class="agri-stock-item"><span></span><div><strong>{{ item.name }}</strong><small>{{ item.quantity }} {{ item.unit }} restant(s)</small></div></div>{% endfor %}
+        {% else %}
+          <strong>Tout est prêt</strong><p>Aucun intrant sous le seuil minimum.</p>
+        {% endif %}
+        <a href="{% url 'intrants:list' %}">Gérer les intrants <span aria-hidden="true">↗</span></a>
+      </section>
+      <section class="agri-photo-card agri-photo-card--field" aria-label="Suivi au cœur des cultures"><span>AU CŒUR DES CULTURES</span><strong>Chaque geste<br />fait grandir la saison.</strong></section>
+      <section class="agri-glass-panel agri-aside-stat">
+        <div class="agri-panel-heading"><span>Dernière récolte</span><a href="{% url 'recoltes:list' %}" aria-label="Voir les récoltes">↗</a></div>
+        {% with harvest=recent_harvests.0 %}
+          {% if harvest %}<strong>{{ harvest.quantity|floatformat:1 }} <small>{{ harvest.unit }}</small></strong><p>{{ harvest.culture.name|default:'Récolte' }} · {{ harvest.harvested_date|date:'d/m/Y' }}</p>
+          {% else %}<strong>À venir</strong><p>Vos récoltes enregistrées seront visibles ici.</p>{% endif %}
+        {% endwith %}
+        <a href="{% url 'recoltes:list' %}">Voir les récoltes <span aria-hidden="true">↗</span></a>
+      </section>
+    </aside>
+  </div>
+
+  <div class="agri-dashboard-lower">
+    <section class="agri-light-panel" aria-labelledby="field-actions-heading">
+      <div class="agri-light-heading"><div><p class="agri-eyebrow agri-eyebrow--light">ACCÈS RAPIDES</p><h2 id="field-actions-heading">Vos outils terrain</h2></div></div>
+      <div class="agri-action-grid">
+        <a href="{% url 'cultures:list' %}"><span>01</span><strong>Mes cultures</strong><small>Consulter les plantations</small><b aria-hidden="true">↗</b></a>
+        <a href="{% url 'intrants:list' %}"><span>02</span><strong>Stocks &amp; intrants</strong><small>Vérifier les ressources</small><b aria-hidden="true">↗</b></a>
+        <a href="{% url 'recoltes:list' %}"><span>03</span><strong>Mes récoltes</strong><small>Suivre la production</small><b aria-hidden="true">↗</b></a>
+      </div>
+    </section>
+    <section class="agri-light-panel" aria-labelledby="harvest-heading">
+      <div class="agri-light-heading"><div><p class="agri-eyebrow agri-eyebrow--light">RÉCOLTES RÉCENTES</p><h2 id="harvest-heading">Le fruit du travail</h2></div></div>
+      {% for harvest in recent_harvests|slice:":3" %}
+        <article class="agri-activity-row"><span class="agri-activity-dot agri-activity-dot--harvest"></span><div><strong>{{ harvest.culture.name|default:'Récolte' }}</strong><small>{{ harvest.parcelle.name|default:'Parcelle' }} · {{ harvest.harvested_date|date:'d/m/Y' }}</small></div><b>{{ harvest.quantity|floatformat:1 }} {{ harvest.unit }}</b></article>
+      {% empty %}<p class="agri-empty agri-empty--light">Vos récoltes enregistrées apparaîtront ici.</p>{% endfor %}
+    </section>
+  </div>
+</div>

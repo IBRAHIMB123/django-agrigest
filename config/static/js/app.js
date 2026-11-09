@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const themeToggle = document.querySelector('[data-theme-toggle]');
   const themeLabel = document.querySelector('[data-theme-label]');
   const themeIcon = document.querySelector('[data-theme-icon]');
+  document.querySelectorAll('.landing-menu .landing-nav a').forEach((link) => {
+    link.addEventListener('click', () => { link.closest('details').open = false; });
+  });
   const applyTheme = (theme) => {
     document.documentElement.dataset.theme = theme;
     const dark = theme === 'dark';

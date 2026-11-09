@@ -1,0 +1,55 @@
+<div class="agri-dashboard agri-dashboard--client">
+  <header class="agri-dashboard-hero">
+    <div class="agri-dashboard-cover"></div>
+    <div class="agri-dashboard-topline">
+      <a class="agri-dashboard-home" href="{% url 'dashboard:home' %}" aria-label="Retour à l'accueil AgriGest"><span class="agri-dashboard-logo" aria-hidden="true">A</span><span>AGRIGEST <small>ESPACE CLIENT</small></span></a>
+      <span class="agri-live"><span></span> Boutique agricole</span>
+      <a class="agri-dashboard-profile" href="{% url 'accounts:profile' %}">Mon profil <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="agri-dashboard-intro">
+      <p class="agri-eyebrow">VOTRE ESPACE CLIENT · {{ today|date:"d F Y" }}</p>
+      <h1 id="dashboard-heading">Bonjour {{ user.first_name|default:user.username }}<br /><em>les récoltes vous attendent.</em></h1>
+      <p>Parcourez les produits proposés par les exploitations et suivez vos commandes.</p>
+    </div>
+    <div class="agri-dashboard-farm"><span class="agri-farm-mark" aria-hidden="true">⌖</span><span><small>ESPACE CLIENT</small><strong>{{ user.get_full_name|default:user.username }}</strong></span></div>
+  </header>
+
+  <div class="agri-dashboard-board">
+    <section class="agri-glass-panel agri-finance-panel" aria-labelledby="client-summary-heading">
+      <div class="agri-panel-heading"><span id="client-summary-heading">Mon activité</span><span aria-hidden="true">···</span></div>
+      <article class="agri-finance-metric"><span>Mes commandes</span><strong>{{ client_order_count }}</strong><small>Commandes passées sur le site</small></article>
+      <article class="agri-finance-metric agri-finance-metric--result"><span>Produits proposés</span><strong>{{ marketplace_count }}</strong><small>Récoltes actuellement en vente</small></article>
+      <a class="agri-panel-link" href="{% url 'ventes:marketplace' %}">Ouvrir la boutique <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="agri-glass-panel agri-client-sales" aria-labelledby="orders-heading">
+      <div class="agri-panel-heading"><span id="orders-heading">Mes commandes récentes</span><a href="{% url 'ventes:orders' %}" aria-label="Voir toutes mes commandes">↗</a></div>
+      {% for order in client_orders %}
+        <article class="agri-client-sale">
+          <span class="agri-sale-icon" aria-hidden="true">↗</span>
+          <div><strong>{{ order.listing.title }}</strong><small>{{ order.quantity_kg }} kg · {{ order.get_status_display }}</small></div>
+          <b>{{ order.total_amount|floatformat:0 }} <small>FCFA</small></b>
+        </article>
+      {% empty %}
+        <div class="agri-operation-empty"><span aria-hidden="true">✳</span><strong>Votre première commande commence ici.</strong><p>Explorez les récoltes disponibles dans la boutique.</p></div>
+      {% endfor %}
+      <div class="agri-production-footer"><span>{{ client_order_count }} commande(s)</span><a href="{% url 'ventes:orders' %}">Historique complet <span aria-hidden="true">→</span></a></div>
+    </section>
+
+    <aside class="agri-dashboard-aside">
+      <section class="agri-glass-panel agri-aside-stat">
+        <div class="agri-panel-heading"><span>Découvrir les récoltes</span><span aria-hidden="true">✳</span></div>
+        <strong>{{ marketplace_count }} <small>annonce(s)</small></strong>
+        <p>Des produits proposés directement par les exploitants.</p>
+        <a href="{% url 'ventes:marketplace' %}">Parcourir la boutique <span aria-hidden="true">↗</span></a>
+      </section>
+      <section class="agri-photo-card agri-photo-card--harvest" aria-label="Récolte agricole"><span>DE LA TERRE À VOTRE TABLE</span><strong>Des produits locaux,<br />en toute confiance.</strong></section>
+      <section class="agri-glass-panel agri-aside-stat">
+        <div class="agri-panel-heading"><span>Commande en attente</span><span aria-hidden="true">⌛</span></div>
+        <strong>{{ client_orders|length }} <small>récente(s)</small></strong>
+        <p>Le vendeur confirme la disponibilité avant la réservation.</p>
+        <a href="{% url 'ventes:orders' %}">Suivre mes commandes <span aria-hidden="true">↗</span></a>
+      </section>
+    </aside>
+  </div>
+</div>

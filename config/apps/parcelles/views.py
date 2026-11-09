@@ -3,13 +3,16 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 
+from apps.accounts.decorators import roles_required
 from apps.accounts.models import get_or_create_farm_profile
+from apps.accounts.models import FarmProfile
 
 from .forms import ParcelleForm
 from .models import Parcelle
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def parcelle_list(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     parcels = Parcelle.objects.filter(farm=farm).prefetch_related('cultures').order_by('-created_at')
@@ -28,6 +31,7 @@ def parcelle_list(request):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def parcelle_detail(request, pk):
     farm = get_or_create_farm_profile(request.user, request=request)
     parcel = get_object_or_404(Parcelle, pk=pk, farm=farm)
@@ -35,6 +39,7 @@ def parcelle_detail(request, pk):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def parcelle_edit(request, pk):
     farm = get_or_create_farm_profile(request.user, request=request)
     parcel = get_object_or_404(Parcelle, pk=pk, farm=farm)
@@ -50,6 +55,7 @@ def parcelle_edit(request, pk):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def parcelle_delete(request, pk):
     farm = get_or_create_farm_profile(request.user, request=request)
     parcel = get_object_or_404(Parcelle, pk=pk, farm=farm)

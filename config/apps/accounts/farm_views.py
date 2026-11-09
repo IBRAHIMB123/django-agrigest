@@ -3,13 +3,18 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 
+from .decorators import roles_required
 from .farm_forms import FarmProfileForm
 from .models import FarmProfile, get_or_create_farm_profile
 
 
 @login_required
 def farm_list(request):
+    can_manage = get_or_create_farm_profile(request.user, request=request).role == FarmProfile.ROLE_ADMIN
     if request.method == 'POST':
+        if not can_manage:
+            messages.error(request, "Seul un administrateur peut gérer les exploitations.")
+            return redirect('accounts:farms')
         form = FarmProfileForm(request.POST)
         if form.is_valid():
             farm = form.save(commit=False)
@@ -25,10 +30,16 @@ def farm_list(request):
         parcel_count=Count('parcelles', distinct=True),
         total_area=Sum('parcelles__area'),
     ).order_by('created_at', 'pk')
-    return render(request, 'accounts/farms.html', {'farms': farms, 'form': form, 'active_farm': get_or_create_farm_profile(request.user, request=request)})
+    return render(request, 'accounts/farms.html', {
+        'farms': farms,
+        'form': form,
+        'active_farm': get_or_create_farm_profile(request.user, request=request),
+        'can_manage': can_manage,
+    })
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN)
 def farm_detail(request, pk):
     farm = get_object_or_404(FarmProfile.objects.filter(user=request.user).annotate(
         parcel_count=Count('parcelles', distinct=True), total_area=Sum('parcelles__area')
@@ -37,6 +48,7 @@ def farm_detail(request, pk):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN)
 def farm_edit(request, pk):
     farm = get_object_or_404(FarmProfile, pk=pk, user=request.user)
     if request.method == 'POST':
@@ -51,6 +63,7 @@ def farm_edit(request, pk):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN)
 def farm_delete(request, pk):
     farm = get_object_or_404(FarmProfile, pk=pk, user=request.user)
     if request.method == 'POST':
@@ -71,6 +84,7 @@ def farm_delete(request, pk):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN)
 def farm_activate(request, pk):
     farm = get_object_or_404(FarmProfile, pk=pk, user=request.user)
     if request.method == 'POST':
@@ -78,4 +92,3 @@ def farm_activate(request, pk):
         messages.success(request, f"Exploitation active : {farm.name}.")
         return redirect('dashboard:index')
     return redirect('accounts:farms')
-

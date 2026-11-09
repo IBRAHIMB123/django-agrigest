@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}{% if is_seller %}Commandes reçues{% else %}Mes commandes{% endif %} | AgriGest{% endblock %}
+{% block page_title %}{% if is_seller %}Commandes reçues{% else %}Mes commandes{% endif %}{% endblock %}
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header"><div><h2 class="panel-title">{% if is_seller %}Les demandes de vos clients{% else %}Le suivi de vos achats{% endif %}</h2><p class="panel-description">Le paiement se convient directement entre le client et le vendeur, en dehors du site.</p></div></div>
+    <div class="market-orders">
+      {% for order in orders %}
+        <article class="market-order">
+          <div class="market-order-heading">
+            <div><p class="market-farm">{% if is_seller %}Commande de {{ order.buyer.get_full_name|default:order.buyer.username }}{% else %}{{ order.listing.farm.name }}{% endif %}</p><h3>{{ order.listing.title }}</h3></div>
+            <span class="market-status market-status--{{ order.status }}">{{ order.get_status_display }}</span>
+          </div>
+          <div class="market-order-details">
+            <span><strong>{{ order.quantity_kg|floatformat:2 }} kg</strong> · {{ order.price_per_kg|floatformat:0 }} FCFA/kg</span>
+            <span><strong>{{ order.total_amount|floatformat:0 }} FCFA</strong></span>
+            <span>{{ order.get_fulfillment_display }}{% if order.delivery_address %} · {{ order.delivery_address }}{% endif %}</span>
+            {% if is_seller %}
+              <span>Contact client : {{ order.phone }}{% if order.buyer.email %} · {{ order.buyer.email }}{% endif %}</span>
+            {% else %}
+              <span>Votre téléphone : {{ order.phone }}</span>
+              <span>Vendeur : {{ order.listing.farm.user.get_full_name|default:order.listing.farm.user.username }}{% if order.listing.farm.user.email %} · {{ order.listing.farm.user.email }}{% endif %}{% if order.listing.farm.location %} · {{ order.listing.farm.location }}{% endif %}</span>
+            {% endif %}
+            <span>Demande du {{ order.created_at|date:'d/m/Y à H:i' }}</span>
+          </div>
+          {% if is_seller and order.status == 'pending' %}
+            <div class="market-order-actions">
+              <form method="post" action="{% url 'ventes:order_update' order.pk %}">{% csrf_token %}<button class="primary-btn" name="action" value="confirm">Confirmer et réserver le stock</button></form>
+              <form method="post" action="{% url 'ventes:order_update' order.pk %}">{% csrf_token %}<button class="danger-btn" name="action" value="reject">Refuser</button></form>
+            </div>
+          {% elif is_seller and order.status == 'confirmed' %}
+            <form method="post" action="{% url 'ventes:order_update' order.pk %}" class="market-order-actions">{% csrf_token %}<button class="primary-btn" name="action" value="complete">Marquer comme terminée</button></form>
+          {% elif not is_seller and order.status == 'pending' or not is_seller and order.status == 'confirmed' %}
+            <form method="post" action="{% url 'ventes:order_update' order.pk %}" class="market-order-actions">{% csrf_token %}<button class="secondary-btn" name="action" value="cancel">Annuler la commande</button></form>
+          {% endif %}
+        </article>
+      {% empty %}
+        <div class="empty-state"><strong>{% if is_seller %}Aucune commande reçue{% else %}Vous n’avez pas encore commandé{% endif %}</strong>{% if is_seller %}Les demandes des clients apparaîtront ici.{% else %}<a href="{% url 'ventes:marketplace' %}">Découvrir la boutique</a>{% endif %}</div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

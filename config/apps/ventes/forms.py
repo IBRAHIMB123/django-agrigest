@@ -1,7 +1,74 @@
+from decimal import Decimal
+
 from django import forms
 
-from .models import Client, Vente
+from .models import Client, HarvestListing, HarvestOrder, Vente
 from apps.campaigns.models import Campaign
+
+
+class HarvestListingForm(forms.ModelForm):
+    class Meta:
+        model = HarvestListing
+        fields = ['title', 'description', 'photo', 'price_per_kg', 'quantity_kg', 'fulfillment', 'is_active']
+        labels = {
+            'title': 'Récolte',
+            'description': 'Description',
+            'photo': 'Photo',
+            'price_per_kg': 'Prix par kilo (FCFA)',
+            'quantity_kg': 'Quantité disponible (kg)',
+            'fulfillment': 'Mode de remise proposé',
+            'is_active': 'Publier l’annonce',
+        }
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. Mangues fraîches'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'price_per_kg': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'step': '0.01'}),
+            'quantity_kg': forms.NumberInput(attrs={'class': 'form-control', 'min': '0.01', 'step': '0.01'}),
+            'fulfillment': forms.Select(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'photo': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.pk:
+            self.fields['photo'].required = True
+        else:
+            self.fields['photo'].required = False
+
+class HarvestOrderForm(forms.ModelForm):
+    quantity_kg = forms.DecimalField(
+        min_value=Decimal('0.01'),
+        max_digits=12,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '0.01', 'step': '0.01'}),
+    )
+
+    class Meta:
+        model = HarvestOrder
+        fields = ['quantity_kg', 'delivery_address', 'phone']
+        labels = {
+            'quantity_kg': 'Quantité souhaitée (kg)',
+            'delivery_address': 'Adresse de livraison',
+            'phone': 'Téléphone pour vous joindre',
+        }
+        widgets = {
+            'delivery_address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Quartier, ville, indications'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'type': 'tel', 'required': True}),
+        }
+
+    def __init__(self, *args, listing, **kwargs):
+        self.listing = listing
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned = super().clean()
+        if self.listing.fulfillment == HarvestListing.FULFILLMENT_DELIVERY and not cleaned.get('delivery_address'):
+            self.add_error('delivery_address', 'Indiquez une adresse pour la livraison.')
+        quantity = cleaned.get('quantity_kg')
+        if quantity and quantity > self.listing.available_kg:
+            self.add_error('quantity_kg', 'Cette quantité dépasse le stock actuellement disponible.')
+        return cleaned
 
 
 class ClientForm(forms.ModelForm):

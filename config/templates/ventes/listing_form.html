@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Modifier une annonce | AgriGest{% endblock %}
+{% block page_title %}Modifier l’annonce{% endblock %}
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header"><div><h2 class="panel-title">{{ listing.title }}</h2><p class="panel-description">Modifiez le prix, le stock ou retirez l’annonce de la boutique.</p></div></div>
+    <section class="form-panel">
+      <form method="post" enctype="multipart/form-data" class="entry-form">
+        {% csrf_token %}{% include 'includes/form_fields.html' with form=form %}
+        <div class="form-actions"><button type="submit" class="primary-btn">Enregistrer</button><a class="secondary-btn" href="{% url 'ventes:listings' %}">Annuler</a></div>
+      </form>
+    </section>
+  </div>
+{% endblock %}

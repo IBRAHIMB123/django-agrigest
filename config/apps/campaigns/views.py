@@ -3,12 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
+from apps.accounts.decorators import roles_required
 from apps.accounts.models import get_or_create_farm_profile
+from apps.accounts.models import FarmProfile
 from .forms import CampaignForm
 from .models import Campaign
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def campaign_list(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     campaigns = Campaign.objects.filter(farm=farm).select_related('parcelle', 'culture')
@@ -32,6 +35,7 @@ def campaign_list(request):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def campaign_edit(request, pk):
     farm = get_or_create_farm_profile(request.user, request=request)
     campaign = get_object_or_404(Campaign, pk=pk, farm=farm)
@@ -47,6 +51,7 @@ def campaign_edit(request, pk):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def campaign_delete(request, pk):
     farm = get_or_create_farm_profile(request.user, request=request)
     campaign = get_object_or_404(Campaign, pk=pk, farm=farm)

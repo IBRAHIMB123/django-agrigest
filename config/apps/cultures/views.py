@@ -3,13 +3,16 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect, render
 
+from apps.accounts.decorators import roles_required
 from apps.accounts.models import get_or_create_farm_profile
+from apps.accounts.models import FarmProfile
 
 from .forms import CultureForm
 from .models import Culture
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def culture_list(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     cultures = Culture.objects.filter(farm=farm).select_related('parcelle').order_by('-created_at')
@@ -28,6 +31,7 @@ def culture_list(request):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def culture_delete(request, pk):
     farm = get_or_create_farm_profile(request.user, request=request)
     culture = get_object_or_404(Culture, pk=pk, farm=farm)
@@ -42,6 +46,7 @@ def culture_delete(request, pk):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def culture_edit(request, pk):
     farm = get_or_create_farm_profile(request.user, request=request)
     culture = get_object_or_404(Culture, pk=pk, farm=farm)

@@ -4,13 +4,16 @@ from django.db.models import Sum
 from django.db.models import Q
 from django.shortcuts import redirect, render
 
+from apps.accounts.decorators import roles_required
 from apps.accounts.models import get_or_create_farm_profile
+from apps.accounts.models import FarmProfile
 
 from .forms import DepenseForm
 from .models import Depense
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN)
 def depense_list(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     depenses = Depense.objects.filter(farm=farm).order_by('-date')

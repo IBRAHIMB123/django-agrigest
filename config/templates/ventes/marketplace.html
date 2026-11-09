@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Boutique agricole | AgriGest{% endblock %}
+{% block page_title %}Boutique agricole{% endblock %}
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header">
+      <div><h2 class="panel-title">Les récoltes du moment</h2><p class="panel-description">Commandez directement auprès des exploitants. Le paiement se fait directement avec le vendeur.</p></div>
+    </div>
+    <form method="get" class="filter-bar">
+      <label class="filter-search"><span>Rechercher un produit ou une exploitation</span><input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Mangues, riz, exploitation..." /></label>
+      <button class="secondary-btn" type="submit">Rechercher</button>
+      {% if query %}<a class="action-link" href="{% url 'ventes:marketplace' %}">Effacer</a>{% endif %}
+    </form>
+    <div class="market-grid">
+      {% for listing in listings %}
+        {% if listing.available_kg > 0 %}
+          <article class="market-card">
+            <img class="market-photo" src="{{ listing.photo.url }}" alt="Photo de {{ listing.title }}" />
+            <div class="market-card-body">
+              <p class="market-farm">{{ listing.farm.name }}{% if listing.farm.location %} · {{ listing.farm.location }}{% endif %}</p>
+              <h3>{{ listing.title }}</h3>
+              {% if listing.description %}<p class="market-description">{{ listing.description|linebreaksbr }}</p>{% endif %}
+              <div class="market-meta"><strong>{{ listing.price_per_kg|floatformat:0 }} FCFA <small>/ kg</small></strong><span>{{ listing.available_kg|floatformat:2 }} kg disponibles</span></div>
+              <p class="market-fulfillment">{{ listing.get_fulfillment_display }}</p>
+              <form method="post" action="{% url 'ventes:order_create' listing.pk %}" class="market-order-form">
+                {% csrf_token %}
+                <label>Quantité (kg)<input class="form-control" type="number" name="quantity_kg" min="0.01" max="{{ listing.available_kg }}" step="0.01" required /></label>
+                {% if listing.fulfillment == 'delivery' %}<label>Adresse de livraison<input class="form-control" type="text" name="delivery_address" maxlength="240" required /></label>{% endif %}
+                <label>Téléphone<input class="form-control" type="tel" name="phone" maxlength="40" required /></label>
+                <button class="primary-btn" type="submit">Envoyer la demande</button>
+              </form>
+              <small class="market-note">La commande sera réservée après confirmation du vendeur.</small>
+            </div>
+          </article>
+        {% endif %}
+      {% empty %}
+        <div class="empty-state"><strong>Aucune annonce pour le moment</strong>Les nouvelles récoltes mises en vente apparaîtront ici.</div>
+      {% endfor %}
+    </div>
+    {% if query and not listings %}<div class="empty-state"><strong>Aucun résultat</strong>Essayez un autre nom de produit ou d’exploitation.</div>{% endif %}
+  </div>
+{% endblock %}

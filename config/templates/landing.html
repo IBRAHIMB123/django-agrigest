@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AgriGest | Une exploitation mieux pilotée{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/landing.css' %}?v=20261109-home4" />{% endblock %}
+
+{% block public_content %}
+  {% if user.is_authenticated %}
+    {% url 'dashboard:index' as primary_url %}
+  {% else %}
+    {% url 'accounts:signup' as primary_url %}
+  {% endif %}
+  <div class="landing-page">
+    <header class="landing-header">
+      <a class="landing-brand" href="{% url 'dashboard:index' %}" aria-label="AgriGest, accueil">
+        <span class="landing-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 21V11m0 4c-4.1 0-6.4-2.2-6.4-6.1 4 .2 6.4 2.4 6.4 6.1Zm0-2.1c0-3.8 2.4-6.2 6.4-6.4-.2 3.9-2.5 6.4-6.4 6.4Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span>AgriGest<span class="landing-brand-dot">.</span></span>
+      </a>
+
+      <details class="landing-menu">
+        <summary aria-label="Ouvrir le menu de navigation"><span></span><span></span></summary>
+        <nav class="landing-nav" aria-label="Navigation principale">
+          <a href="#approche">Notre approche</a>
+          <a href="#solutions">Solutions</a>
+          <a href="#parcours">Comment ça marche</a>
+          {% if user.is_authenticated %}
+            <a class="landing-nav-login" href="{{ primary_url }}">Tableau de bord</a>
+          {% else %}
+            <a class="landing-nav-login" href="{% url 'accounts:login' %}">Connexion</a>
+          {% endif %}
+        </nav>
+      </details>
+
+      <div class="landing-header-actions">
+        {% if user.is_authenticated %}
+          <a class="landing-login" href="{{ primary_url }}">Tableau de bord</a>
+          <a class="landing-button landing-button--small" href="{{ primary_url }}">Ouvrir mon dashboard <span aria-hidden="true">↗</span></a>
+        {% else %}
+          <a class="landing-login" href="{% url 'accounts:login' %}">Connexion</a>
+          <a class="landing-button landing-button--small" href="#acces">Ouvrir mon dashboard <span aria-hidden="true">↗</span></a>
+        {% endif %}
+      </div>
+    </header>
+
+    <main id="contenu">
+      <section class="landing-hero" aria-labelledby="landing-title">
+        <img class="landing-hero-image" src="{% static 'img/field-maize.webp' %}" alt="" fetchpriority="high" />
+        <div class="landing-hero-shade"></div>
+        <div class="landing-hero-content">
+          <p class="landing-eyebrow"><span></span> La gestion agricole, à hauteur de terrain</p>
+          <h1 id="landing-title">Cultivez mieux.<br /><em>Pilotez avec clarté.</em></h1>
+          <p class="landing-hero-copy">Parcelles, cultures, stocks, récoltes et résultats : rassemblez l’essentiel de votre exploitation dans un espace simple à utiliser.</p>
+          <div class="landing-hero-actions">
+            <a class="landing-button landing-button--light" href="{% if user.is_authenticated %}{{ primary_url }}{% else %}#acces{% endif %}">Ouvrir mon dashboard <span aria-hidden="true">↗</span></a>
+            <a class="landing-text-link landing-text-link--light" href="#solutions">Explorer les solutions <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <div class="landing-hero-note"><span class="landing-note-icon" aria-hidden="true">✳</span><span>Votre saison, vos données,<br /><strong>une vision plus nette.</strong></span></div>
+        <div class="landing-hero-index" aria-hidden="true">01 <span></span> 03</div>
+      </section>
+
+      <section class="landing-intro landing-section" id="approche" aria-labelledby="approach-title">
+        <div class="landing-intro-copy">
+          <p class="landing-eyebrow landing-eyebrow--dark">Une autre façon de gérer</p>
+          <h2 id="approach-title">Moins de dispersion.<br /><em>Plus de maîtrise.</em></h2>
+          <p>Les décisions du quotidien méritent des informations claires. AgriGest relie vos opérations agricoles et votre suivi financier pour vous aider à avancer avec confiance.</p>
+          <a class="landing-inline-link" href="{{ primary_url }}">Commencer simplement <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="landing-principles" aria-label="Les piliers d’AgriGest">
+          <article class="landing-principle">
+            <span class="landing-principle-number">01</span>
+            <div><h3>Tout au même endroit</h3><p>Vos parcelles, cultures et campagnes réunies dans un seul espace.</p></div>
+            <span class="landing-principle-icon" aria-hidden="true">↗</span>
+          </article>
+          <article class="landing-principle">
+            <span class="landing-principle-number">02</span>
+            <div><h3>Le terrain en premier</h3><p>Stocks, interventions et récoltes suivis au rythme de vos activités.</p></div>
+            <span class="landing-principle-icon" aria-hidden="true">↗</span>
+          </article>
+          <article class="landing-principle">
+            <span class="landing-principle-number">03</span>
+            <div><h3>Des chiffres qui éclairent</h3><p>Ventes, dépenses et rapports pour mieux comprendre vos résultats.</p></div>
+            <span class="landing-principle-icon" aria-hidden="true">↗</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="landing-solutions landing-section" id="solutions" aria-labelledby="solutions-title">
+        <div class="landing-section-heading">
+          <div>
+            <p class="landing-eyebrow landing-eyebrow--dark">L’essentiel de votre exploitation</p>
+            <h2 id="solutions-title">Des outils utiles.<br /><em>Un quotidien plus fluide.</em></h2>
+          </div>
+          <a class="landing-inline-link" href="{{ primary_url }}">Tous les outils <span aria-hidden="true">↗</span></a>
+        </div>
+
+        <article class="landing-feature-card">
+          <img src="{% static 'img/field-rice.webp' %}" alt="" loading="lazy" />
+          <div class="landing-feature-shade"></div>
+          <div class="landing-feature-copy">
+            <p class="landing-card-kicker">01 — Planifier et suivre</p>
+            <h3>Parcelles &amp; cultures</h3>
+            <p>Gardez une vue claire sur vos surfaces, vos plantations et l’avancement des campagnes.</p>
+            <a class="landing-card-link" href="{{ primary_url }}">Organiser mon exploitation <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="landing-feature-aside" aria-label="Fonctionnalités">
+            <span>Parcelles</span><span>Cultures</span><span>Campagnes</span>
+          </div>
+        </article>
+
+        <div class="landing-solution-grid">
+          <article class="landing-solution-card landing-solution-card--stock">
+            <div class="landing-solution-icon" aria-hidden="true">✳</div>
+            <p class="landing-card-kicker">02 — Agir au bon moment</p>
+            <h3>Stocks &amp; opérations</h3>
+            <p>Suivez les intrants, les interventions et les récoltes au fil de la saison.</p>
+            <a class="landing-inline-link" href="{{ primary_url }}">Découvrir le suivi terrain <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="landing-solution-card landing-solution-card--finance">
+            <div class="landing-solution-icon" aria-hidden="true">↗</div>
+            <p class="landing-card-kicker">03 — Comprendre vos résultats</p>
+            <h3>Ventes &amp; finances</h3>
+            <p>Reliez recettes et dépenses pour suivre l’activité et consulter vos rapports.</p>
+            <a class="landing-inline-link" href="{{ primary_url }}">Voir les outils de gestion <span aria-hidden="true">↗</span></a>
+          </article>
+        </div>
+      </section>
+
+      <section class="landing-journey landing-section" id="parcours" aria-labelledby="journey-title">
+        <div class="landing-journey-image">
+          <img src="{% static 'img/harvest-rice.webp' %}" alt="Récolte de riz dans une exploitation agricole" loading="lazy" />
+          <span class="landing-image-caption">Une vision qui part du terrain.</span>
+        </div>
+        <div class="landing-journey-copy">
+          <p class="landing-eyebrow landing-eyebrow--dark">Pensé pour votre réalité</p>
+          <h2 id="journey-title">À chaque poste,<br /><em>la bonne perspective.</em></h2>
+          <p>Un espace adapté au rôle de chacun : piloter l’exploitation, coordonner le terrain ou suivre les produits et les ventes.</p>
+          <ol class="landing-steps">
+            <li><span>1</span><div><strong>Créez votre espace</strong><small>Renseignez votre compte et votre exploitation.</small></div></li>
+            <li><span>2</span><div><strong>Choisissez votre interface</strong><small>Adaptez l’espace à votre poste depuis votre profil.</small></div></li>
+            <li><span>3</span><div><strong>Suivez votre activité</strong><small>Retrouvez vos outils et vos indicateurs au même endroit.</small></div></li>
+          </ol>
+          <a class="landing-button landing-button--dark" href="{{ primary_url }}">Créer mon espace <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <section class="landing-access" id="acces" aria-labelledby="access-title">
+        <div class="landing-access-copy">
+          <p class="landing-eyebrow landing-eyebrow--dark">Votre espace vous attend</p>
+          <h2 id="access-title">Ouvrir mon<br /><em>dashboard AgriGest.</em></h2>
+          <p>Connectez-vous à votre compte ou créez votre espace personnel pour accéder à votre exploitation.</p>
+        </div>
+        <div class="landing-access-options">
+          {% if user.is_authenticated %}
+            <a class="landing-access-card landing-access-card--primary" href="{{ primary_url }}"><span class="landing-access-icon" aria-hidden="true">↗</span><span><strong>Accéder à mon tableau de bord</strong><small>Reprendre le suivi de mon exploitation</small></span><b aria-hidden="true">→</b></a>
+          {% else %}
+            <a class="landing-access-card landing-access-card--primary" href="{% url 'accounts:login' %}"><span class="landing-access-icon" aria-hidden="true">↗</span><span><strong>J’ai déjà un compte</strong><small>Connexion à mon espace de travail</small></span><b aria-hidden="true">→</b></a>
+            <a class="landing-access-card" href="{% url 'accounts:signup' %}"><span class="landing-access-icon" aria-hidden="true">＋</span><span><strong>Créer mon espace</strong><small>Inscrire mon exploitation sur AgriGest</small></span><b aria-hidden="true">→</b></a>
+          {% endif %}
+        </div>
+      </section>
+
+      <section class="landing-cta" aria-labelledby="cta-title">
+        <div class="landing-cta-mark" aria-hidden="true">A.</div>
+        <div>
+          <p class="landing-eyebrow landing-eyebrow--light">Prêt pour la prochaine étape ?</p>
+          <h2 id="cta-title">Votre exploitation mérite<br /><em>une vision à sa mesure.</em></h2>
+        </div>
+        <a class="landing-button landing-button--light" href="{% if user.is_authenticated %}{{ primary_url }}{% else %}#acces{% endif %}">Ouvrir mon dashboard <span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+
+    <footer class="landing-footer">
+      <a class="landing-brand" href="{% url 'dashboard:index' %}">
+        <span class="landing-brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V11m0 4c-4.1 0-6.4-2.2-6.4-6.1 4 .2 6.4 2.4 6.4 6.1Zm0-2.1c0-3.8 2.4-6.2 6.4-6.4-.2 3.9-2.5 6.4-6.4 6.4Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>AgriGest<span class="landing-brand-dot">.</span></span>
+      </a>
+      <p>La gestion agricole, pensée pour le terrain.</p>
+      <nav aria-label="Liens de pied de page"><a href="#approche">Notre approche</a><a href="#solutions">Solutions</a>{% if user.is_authenticated %}<a href="{{ primary_url }}">Tableau de bord</a>{% else %}<a href="{% url 'accounts:login' %}">Connexion</a>{% endif %}</nav>
+      <span class="landing-copyright">© {% now "Y" %} AgriGest</span>
+    </footer>
+  </div>
+{% endblock %}

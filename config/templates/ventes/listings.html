@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Mes annonces | AgriGest{% endblock %}
+{% block page_title %}Mes annonces de récoltes{% endblock %}
+{% block content %}
+  <div class="page-card">
+    <div class="panel-header"><div><h2 class="panel-title">Mettre une récolte en vente</h2><p class="panel-description">Ajoutez une photo, un prix au kilo et la quantité disponible. Les acheteurs vous contactent pour convenir du paiement.</p></div></div>
+    <section class="form-panel market-create-panel">
+      <form method="post" enctype="multipart/form-data" class="entry-form">
+        {% csrf_token %}{% include 'includes/form_fields.html' with form=form %}
+        <div class="form-actions"><button type="submit" class="primary-btn">Publier l’annonce</button></div>
+      </form>
+    </section>
+    <section class="market-listings-section">
+      <h2 class="card-title">Mes annonces</h2>
+      <div class="market-grid">
+        {% for listing in listings %}
+          <article class="market-card">
+            <img class="market-photo" src="{{ listing.photo.url }}" alt="Photo de {{ listing.title }}" />
+            <div class="market-card-body">
+              <p class="market-farm">{% if listing.is_active %}En ligne{% else %}Retirée{% endif %}</p>
+              <h3>{{ listing.title }}</h3>
+              <div class="market-meta"><strong>{{ listing.price_per_kg|floatformat:0 }} FCFA <small>/ kg</small></strong><span>{{ listing.available_kg|floatformat:2 }} kg disponibles</span></div>
+              <p class="market-fulfillment">{{ listing.get_fulfillment_display }}</p>
+              <a class="secondary-btn" href="{% url 'ventes:listing_edit' listing.pk %}">Modifier l’annonce</a>
+            </div>
+          </article>
+        {% empty %}
+          <div class="empty-state"><strong>Vous n’avez pas encore d’annonce.</strong>Publiez une récolte pour la proposer aux clients.</div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+{% endblock %}

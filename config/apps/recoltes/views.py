@@ -4,13 +4,17 @@ from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 
+from apps.accounts.decorators import roles_required
+
 from apps.accounts.models import get_or_create_farm_profile
+from apps.accounts.models import FarmProfile
 
 from .forms import RecolteForm
 from .models import Recolte
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def recolte_list(request):
     farm = get_or_create_farm_profile(request.user, request=request)
     recoltes = Recolte.objects.filter(farm=farm).select_related('culture', 'parcelle', 'campaign').order_by('-harvested_date')
@@ -38,6 +42,7 @@ def recolte_list(request):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def recolte_edit(request, pk):
     farm = get_or_create_farm_profile(request.user, request=request)
     recolte = get_object_or_404(Recolte, pk=pk, farm=farm)
@@ -53,6 +58,7 @@ def recolte_edit(request, pk):
 
 
 @login_required
+@roles_required(FarmProfile.ROLE_ADMIN, FarmProfile.ROLE_WORKER)
 def recolte_delete(request, pk):
     farm = get_or_create_farm_profile(request.user, request=request)
     recolte = get_object_or_404(Recolte, pk=pk, farm=farm)

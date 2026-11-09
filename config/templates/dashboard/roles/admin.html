@@ -1,0 +1,112 @@
+<div class="agri-dashboard agri-dashboard--admin">
+  <header class="agri-dashboard-hero">
+    <div class="agri-dashboard-cover"></div>
+    <div class="agri-dashboard-topline">
+      <a class="agri-dashboard-home" href="{% url 'dashboard:home' %}" aria-label="Retour à l'accueil AgriGest">
+        <span class="agri-dashboard-logo" aria-hidden="true">A</span>
+        <span>AGRIGEST <small>GESTION AGRICOLE</small></span>
+      </a>
+      <span class="agri-live"><span></span> Exploitation active</span>
+      <a class="agri-dashboard-profile" href="{% url 'accounts:profile' %}">Mon profil <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="agri-dashboard-intro">
+      <p class="agri-eyebrow">VOTRE TABLEAU DE PILOTAGE · {{ today|date:"d F Y" }}</p>
+      <h1 id="dashboard-heading">Bonjour {{ user.first_name|default:user.username }}<br /><em>voici votre saison.</em></h1>
+      <p>Un regard clair sur les performances et les priorités de {{ farm.name }}.</p>
+    </div>
+    <div class="agri-dashboard-farm">
+      <span class="agri-farm-mark" aria-hidden="true">⌖</span>
+      <span><small>EXPLOITATION</small><strong>{{ farm.name }}</strong></span>
+      {% if farm.location %}<span class="agri-farm-location">{{ farm.location }}</span>{% endif %}
+    </div>
+  </header>
+
+  <div class="agri-dashboard-board">
+    <section class="agri-glass-panel agri-finance-panel" aria-labelledby="finance-heading">
+      <div class="agri-panel-heading"><span id="finance-heading">Repères financiers</span><span class="agri-panel-menu" aria-hidden="true">···</span></div>
+      <article class="agri-finance-metric">
+        <span>Chiffre d'affaires</span><strong>{{ total_revenue|floatformat:0 }} <small>FCFA</small></strong>
+        <small>{{ sales_count }} vente(s) enregistrée(s)</small>
+      </article>
+      <article class="agri-finance-metric">
+        <span>Dépenses suivies</span><strong>{{ total_expenses|floatformat:0 }} <small>FCFA</small></strong>
+        <small>Charges saisies dans AgriGest</small>
+      </article>
+      <article class="agri-finance-metric agri-finance-metric--result">
+        <span>Résultat estimé</span><strong>{{ result_estimate|floatformat:0 }} <small>FCFA</small></strong>
+        <small>Revenus moins dépenses</small>
+      </article>
+      <a class="agri-panel-link" href="{% url 'rapports:index' %}">Consulter les rapports <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="agri-glass-panel agri-production-panel" aria-labelledby="production-heading">
+      <div class="agri-panel-heading"><span id="production-heading">Production récoltée <small>· en tonnes</small></span><a href="{% url 'recoltes:list' %}" aria-label="Voir les récoltes">↗</a></div>
+      <div class="agri-production-visual">
+        <svg class="agri-production-ring" viewBox="0 0 120 120" role="img" aria-label="Répartition des récoltes par culture">
+          <circle class="agri-ring-track" cx="60" cy="60" r="44"></circle>
+          {% for item in crop_chart %}
+            <circle class="agri-ring-segment" cx="60" cy="60" r="44" stroke="{{ item.color }}" stroke-dasharray="{{ item.segment_length }} 276.46" stroke-dashoffset="-{{ item.segment_offset }}"></circle>
+          {% endfor %}
+        </svg>
+        <div class="agri-ring-value"><strong>{{ production_total|floatformat:1 }}</strong><span>TONNES</span></div>
+        <div class="agri-ring-caption">Production<br />enregistrée</div>
+      </div>
+      <div class="agri-crop-legend">
+        {% for item in crop_chart %}
+          <div class="agri-crop-item"><span style="--crop-color:{{ item.color }}"></span><strong>{{ item.quantity|floatformat:1 }} T</strong><small>{{ item.name }}</small></div>
+        {% empty %}
+          <p class="agri-empty">Les récoltes par culture apparaîtront ici.</p>
+        {% endfor %}
+      </div>
+      <div class="agri-production-footer"><span>{{ harvest_this_month|floatformat:1 }} T récoltée(s) ce mois</span><a href="{% url 'recoltes:list' %}">Historique des récoltes <span aria-hidden="true">→</span></a></div>
+    </section>
+
+    <aside class="agri-dashboard-aside">
+      <section class="agri-glass-panel agri-aside-stat">
+        <div class="agri-panel-heading"><span>Votre domaine</span><span aria-hidden="true">⌖</span></div>
+        <strong>{{ total_area|floatformat:1 }} <small>ha</small></strong>
+        <p>{{ parcels.count }} parcelle(s) · {{ culture_count }} culture(s)</p>
+        <a href="{% url 'parcelles:list' %}">Gérer mes parcelles <span aria-hidden="true">↗</span></a>
+      </section>
+      <section class="agri-photo-card agri-photo-card--harvest" aria-label="Une récolte prometteuse">
+        <span>AU FIL DE LA SAISON</span><strong>La terre récompense<br />les bons gestes.</strong>
+      </section>
+      <section class="agri-glass-panel agri-aside-stat agri-alert-stat">
+        <div class="agri-panel-heading"><span>Vigilance stock</span><span class="agri-alert-count">{{ low_stock|length }}</span></div>
+        {% if low_stock %}
+          <strong>{{ low_stock|length }} <small>alerte(s)</small></strong>
+          <p>Des intrants nécessitent votre attention.</p>
+        {% else %}
+          <strong>Tout va bien</strong>
+          <p>Aucun stock sous le seuil minimum.</p>
+        {% endif %}
+        <a href="{% url 'intrants:list' %}">Voir les stocks <span aria-hidden="true">↗</span></a>
+      </section>
+    </aside>
+  </div>
+
+  <div class="agri-dashboard-lower">
+    <section class="agri-light-panel" aria-labelledby="campaigns-heading">
+      <div class="agri-light-heading"><div><p class="agri-eyebrow agri-eyebrow--light">AVANCEMENT TERRAIN</p><h2 id="campaigns-heading">Campagnes en cours</h2></div><a href="{% url 'campaigns:list' %}">Toutes les campagnes <span aria-hidden="true">↗</span></a></div>
+      {% for campaign in active_campaigns %}
+        <article class="agri-campaign-row">
+          <span class="agri-campaign-icon" aria-hidden="true">✳</span>
+          <div class="agri-campaign-info"><strong>{{ campaign.name }}</strong><small>{{ campaign.culture.name }} · {{ campaign.parcelle.name }}</small></div>
+          <div class="agri-progress"><span style="width:{{ campaign.progress }}%"></span></div><b>{{ campaign.progress }}%</b>
+        </article>
+      {% empty %}
+        <p class="agri-empty agri-empty--light">Aucune campagne active pour le moment.</p>
+      {% endfor %}
+    </section>
+    <section class="agri-light-panel" aria-labelledby="activity-heading">
+      <div class="agri-light-heading"><div><p class="agri-eyebrow agri-eyebrow--light">DERNIÈRES OPÉRATIONS</p><h2 id="activity-heading">Activité récente</h2></div><a href="{% url 'rapports:index' %}">Rapports <span aria-hidden="true">↗</span></a></div>
+      {% for sale in recent_sales|slice:":3" %}
+        <article class="agri-activity-row"><span class="agri-activity-dot agri-activity-dot--sale"></span><div><strong>Vente · {{ sale.product_name }}</strong><small>{{ sale.sale_date|date:'d/m/Y' }} · {{ sale.client.name|default:'Client direct' }}</small></div><b>+{{ sale.total_amount|floatformat:0 }} F</b></article>
+      {% endfor %}
+      {% for expense in recent_expenses|slice:":3" %}
+        <article class="agri-activity-row"><span class="agri-activity-dot agri-activity-dot--expense"></span><div><strong>{{ expense.get_category_display }}</strong><small>{{ expense.date|date:'d/m/Y' }} · {{ expense.description }}</small></div><b>−{{ expense.amount|floatformat:0 }} F</b></article>
+      {% endfor %}
+      {% if not recent_sales and not recent_expenses %}<p class="agri-empty agri-empty--light">Vos ventes et dépenses apparaîtront ici.</p>{% endif %}
+    </section>
+  </div>
+</div>

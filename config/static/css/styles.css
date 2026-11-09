@@ -60,6 +60,60 @@ html[data-theme="dark"] {
   --shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
 }
 
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+.market-card, .market-order {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.market-photo {
+  display: block;
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  background: var(--leaf-soft);
+}
+.market-card-body { display: grid; gap: 12px; padding: 18px; }
+.market-card-body h3, .market-order h3 { margin: 0; color: var(--ink); font-size: 1.15rem; }
+.market-farm, .market-note { margin: 0; color: var(--muted); font-size: 0.82rem; }
+.market-description { margin: 0; color: var(--ink-soft); line-height: 1.55; }
+.market-meta { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+.market-meta strong { color: var(--forest); font-size: 1.2rem; }
+.market-meta small { font-size: 0.78rem; font-weight: 500; }
+.market-meta span { color: var(--ink-soft); font-size: 0.85rem; }
+.market-fulfillment { margin: 0; color: var(--ink-soft); font-size: 0.85rem; }
+.market-order-form { display: grid; gap: 10px; }
+.market-order-form label { display: grid; gap: 5px; color: var(--ink-soft); font-size: 0.82rem; font-weight: 600; }
+.market-order-form .primary-btn { width: 100%; }
+.market-note { line-height: 1.45; }
+.market-create-panel { margin-bottom: 28px; }
+.market-listings-section { margin-top: 28px; }
+.market-listings-section > .card-title { margin-bottom: 16px; }
+.market-orders { display: grid; gap: 14px; margin-top: 18px; }
+.market-order { padding: 18px; }
+.market-order-heading { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.market-status { padding: 6px 10px; border-radius: 999px; background: var(--amber-soft); color: var(--amber); font-size: 0.78rem; font-weight: 650; }
+.market-status--confirmed, .market-status--completed { background: var(--success-soft); color: var(--success); }
+.market-status--rejected, .market-status--cancelled { background: var(--danger-soft); color: var(--danger); }
+.market-order-details { display: grid; gap: 8px; margin-top: 16px; color: var(--ink-soft); font-size: 0.9rem; }
+.market-order-details strong { color: var(--ink); }
+.market-order-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.market-order-actions form { margin: 0; }
+.market-order-actions button { min-height: 40px; }
+@media (max-width: 600px) {
+  .market-photo { height: 185px; }
+  .market-order { padding: 14px; }
+  .market-order-actions, .market-order-actions form, .market-order-actions button { width: 100%; }
+}
+
 * { box-sizing: border-box; }
 html { min-width: 320px; }
 body {
@@ -80,6 +134,61 @@ img { max-width: 100%; display: block; }
   padding: 8px 12px; border-radius: 8px; background: var(--surface); color: var(--ink);
 }
 .skip-link:focus { top: 12px; }
+
+.role-interface {
+  position: relative; overflow: hidden;
+  margin-bottom: 24px; padding: 20px 22px 18px;
+  border: 1px solid var(--line); border-radius: 24px;
+  background: linear-gradient(135deg, rgba(24,61,50,0.08), rgba(108,155,104,0.14));
+  box-shadow: var(--shadow);
+}
+.role-interface--worker { background: linear-gradient(135deg, rgba(89,120,74,0.18), rgba(168,180,69,0.12)); }
+.role-interface--client { background: linear-gradient(135deg, rgba(138,98,57,0.15), rgba(216,171,94,0.12)); }
+.role-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 12px; border-radius: 999px;
+  background: rgba(255,255,255,0.5); border: 1px solid rgba(24,61,50,0.08);
+  color: var(--forest); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.role-header {
+  display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-top: 12px;
+}
+.role-kicker {
+  margin: 0; color: var(--forest); font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.role-tag {
+  max-width: 420px; color: var(--ink-soft); font-size: 0.85rem; line-height: 1.5;
+}
+
+.role-selector-card {
+  display: flex; flex-direction: column; gap: 14px;
+}
+.role-selector-form {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.role-selector-form label {
+  color: var(--ink-soft); font-size: 0.82rem; font-weight: 600;
+}
+.role-selector-form select {
+  width: 100%; min-height: 46px; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+}
+
+.role-quickstats {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px;
+}
+.role-stat-card {
+  padding: 18px 18px 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow);
+}
+.role-stat-label {
+  display: block; margin-bottom: 10px; color: var(--muted); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.role-stat-card strong {
+  display: block; margin-bottom: 4px; font-family: var(--display); font-size: clamp(1.5rem, 2vw, 2rem); letter-spacing: -0.05em; color: var(--forest);
+}
+.role-stat-card small {
+  color: var(--ink-soft); font-size: 0.8rem;
+}
 
 .shell { min-height: 100vh; background: var(--ivory); }
 .sidebar {

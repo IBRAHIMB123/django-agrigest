@@ -18,6 +18,12 @@ class SignupForm(UserCreationForm):
     last_name = forms.CharField(max_length=50, required=True, label='Nom', widget=forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'family-name'}))
     farm_name = forms.CharField(max_length=120, required=True, label="Nom de l'exploitation", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom de la ferme'}))
     farm_location = forms.CharField(max_length=150, required=False, label='Localisation', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ville ou région'}))
+    role = forms.ChoiceField(
+        choices=FarmProfile.ROLE_CHOICES,
+        initial=FarmProfile.ROLE_ADMIN,
+        label='Interface principale',
+        widget=forms.Select(attrs={'class': 'form-control'}),
+    )
 
     class Meta:
         model = User
@@ -47,5 +53,6 @@ class SignupForm(UserCreationForm):
                 user=user,
                 name=self.cleaned_data['farm_name'],
                 location=self.cleaned_data['farm_location'],
+                role=self.cleaned_data.get('role', FarmProfile.ROLE_ADMIN),
             )
         return user

@@ -12,6 +12,7 @@
         <button type="submit" class="ghost-btn">Se déconnecter</button>
       </form>
     </div>
+
     <div class="data-grid">
       <div>
         <div class="summary-box">
@@ -33,14 +34,29 @@
           </div>
         </div>
       </div>
-      <div class="card">
-        <h3 class="card-title">Mesures de sécurité</h3>
-        <ul style="padding-left: 18px; line-height: 1.9; color: var(--muted); margin-top: 10px;">
-          <li>Protection des pages privées</li>
-          <li>Authentification Django standard</li>
-          <li>Isolation des données par exploitation</li>
-        </ul>
+
+      <div class="card role-selector-card">
+        <h3 class="card-title">Interface active</h3>
+        <form method="post" class="role-selector-form">
+          {% csrf_token %}
+          <label for="role-select">Choisissez l'interface du tableau de bord</label>
+          <select id="role-select" name="role">
+            {% for value, label in role_choices %}
+              <option value="{{ value }}" {% if farm.role == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="primary-btn">Enregistrer</button>
+        </form>
       </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Mesures de sécurité</h3>
+      <ul style="padding-left: 18px; line-height: 1.9; color: var(--muted); margin-top: 10px;">
+        <li>Protection des pages privées</li>
+        <li>Authentification Django standard</li>
+        <li>Isolation des données par exploitation</li>
+      </ul>
     </div>
   </div>
 {% endblock %}
