@@ -11,17 +11,29 @@
       </form>
     </section>
     <section class="market-listings-section">
-      <h2 class="card-title">Mes annonces</h2>
-      <div class="market-grid">
+      <div class="market-listings-heading">
+        <div><h2 class="card-title">Mes annonces</h2><p class="market-listings-caption">Gérez la visibilité et le stock de vos récoltes.</p></div>
+        <span class="market-listings-count">{{ listings|length }} annonce{{ listings|length|pluralize }}</span>
+      </div>
+      <div class="market-grid market-grid--seller">
         {% for listing in listings %}
-          <article class="market-card">
-            <img class="market-photo" src="{{ listing.photo.url }}" alt="Photo de {{ listing.title }}" />
+          <article class="market-card market-card--seller">
+            <div class="market-card-visual">
+              <img class="market-photo" src="{{ listing.photo.url }}" alt="Photo de {{ listing.title }}" loading="lazy" />
+              <span class="market-listing-badge{% if not listing.is_active %} market-listing-badge--inactive{% endif %}">
+                <span aria-hidden="true"></span>{% if listing.is_active %}En ligne{% else %}Retirée{% endif %}
+              </span>
+              <div class="market-photo-price"><strong>{{ listing.price_per_kg|floatformat:0 }}</strong><span>FCFA / kg</span></div>
+            </div>
             <div class="market-card-body">
-              <p class="market-farm">{% if listing.is_active %}En ligne{% else %}Retirée{% endif %}</p>
-              <h3>{{ listing.title }}</h3>
-              <div class="market-meta"><strong>{{ listing.price_per_kg|floatformat:0 }} FCFA <small>/ kg</small></strong><span>{{ listing.available_kg|floatformat:2 }} kg disponibles</span></div>
-              <p class="market-fulfillment">{{ listing.get_fulfillment_display }}</p>
-              <a class="secondary-btn" href="{% url 'ventes:listing_edit' listing.pk %}">Modifier l’annonce</a>
+              <p class="market-farm"><span class="market-farm-mark" aria-hidden="true">⌖</span><span>{{ listing.farm.name }}{% if listing.farm.location %}<span class="market-farm-location"> · {{ listing.farm.location }}</span>{% endif %}</span></p>
+              <h3 class="market-product-title">{{ listing.title }}</h3>
+              {% if listing.description %}<p class="market-description">{{ listing.description|linebreaksbr }}</p>{% endif %}
+              <div class="market-product-facts">
+                <span class="market-stock{% if listing.available_kg <= 0 %} market-stock--empty{% endif %}"><span aria-hidden="true"></span>{{ listing.available_kg|floatformat:2 }} kg en stock</span>
+                <span class="market-fulfillment"><span aria-hidden="true">{% if listing.fulfillment == 'delivery' %}↗{% else %}⌖{% endif %}</span>{{ listing.get_fulfillment_display }}</span>
+              </div>
+              <a class="primary-btn market-edit-button" href="{% url 'ventes:listing_edit' listing.pk %}">Modifier l’annonce <span aria-hidden="true">→</span></a>
             </div>
           </article>
         {% empty %}

@@ -573,7 +573,27 @@
     'Le vendeur confirme la disponibilité avant la réservation.': 'Feerelacɛ bɛ fɛn bɛ yen wa, o lajɛ k’a fɔ sani ka a da.',
     'Suivre mes commandes': 'Ka n ka daɲɛw lajɛ',
     'Campagne annulée': 'San kɔnɔ baara dabilanna',
-    'Foroba': 'Foroba'
+    'Foroba': 'Foroba',
+    'Récolte disponible': 'Sɔrɔli bɛ yen',
+    Commander: 'Ka daɲɛ da',
+    'Demande sans paiement en ligne': 'Daɲɛ dɔ, wari sara tɛ sitɛ la',
+    'En stock': 'A bɛ lajɛli la',
+    'kg en stock': 'kg bɛ lajɛli la',
+    'Modifier l’annonce': 'Ka fɛn feere yɛlɛma',
+    'Gérez la visibilité et le stock de vos récoltes.': 'Ka i ka sɔrɔli jira cogo ani lajɛli ɲɛmɔgɔya.',
+    'annonce': 'fɛn feere',
+    'FCFA / kg': 'FCFA / kg',
+    'En ligne': 'A bɛ sitɛ la',
+    Retirée: 'A bɔra',
+    'Envoyer la demande': 'Ka daɲɛ ci',
+    'La commande sera réservée après confirmation du vendeur.': 'Daɲɛ bɛna mara ni feerelacɛ ye a lajɛ kɔfɛ.',
+    'Quartier, ville': 'Quartier, dugu',
+    'Ex. 5': 'Misali: 5',
+    '+223': '+223',
+    'Les récoltes du moment': 'Sɔrɔli minnu bɛ yen sisan',
+    'Rechercher un produit ou une exploitation': 'Ka fɛn walima foroba ɲini',
+    'Les nouvelles récoltes mises en vente apparaîtront ici.': 'Sɔrɔli kura minnu bɛna feere, olu bɛna jira yan.',
+    'Essayez un autre nom de produit ou d’exploitation.': 'Fɛn walima foroba tɔgɔ wɛrɛ ɲini.'
   };
 
   const originalText = new WeakMap();
@@ -587,7 +607,9 @@
     [/\bcommande\(s\)/gi, 'daɲɛ'],
     [/\balerte\(s\)/gi, 'sigilikan'],
     [/\brécente\(s\)/gi, 'kura'],
-    [/\brestant\(s\)/gi, 'tɔnin']
+    [/\brestant\(s\)/gi, 'tɔnin'],
+    [/(\d+(?:[.,]\d+)?)\s*kg disponibles/gi, '$1 kg bɛ yen'],
+    [/(\d+(?:[.,]\d+)?)\s*kg en stock/gi, '$1 kg bɛ lajɛli la']
   ];
 
   function translateValue(source) {
