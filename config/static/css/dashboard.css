@@ -148,6 +148,28 @@
 .agri-action-grid > a > strong { color: #293a2e; font-size: .68rem; }
 .agri-action-grid > a > small { color: #7a8375; font-size: .55rem; }
 .agri-action-grid > a > b { position: absolute; top: 11px; right: 11px; color: #73885b; font-size: .75rem; }
+html[data-theme="dark"] .agri-light-panel {
+  border-color: rgba(223, 239, 225, .14);
+  color: #e9f1e9;
+  background: linear-gradient(145deg, #202c23, #1a241d);
+}
+html[data-theme="dark"] .agri-dashboard {
+  border-color: rgba(223, 239, 225, .2);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .38);
+}
+html[data-theme="dark"] .agri-light-heading h2,
+html[data-theme="dark"] .agri-campaign-info strong,
+html[data-theme="dark"] .agri-activity-row strong { color: #e9f1e9; }
+html[data-theme="dark"] .agri-campaign-icon {
+  color: #b6d98d;
+  background: #2a3b2b;
+}
+html[data-theme="dark"] .agri-action-grid > a {
+  border-color: rgba(223, 239, 225, .14);
+  background: rgba(11, 19, 13, .52);
+}
+html[data-theme="dark"] .agri-action-grid > a > strong { color: #e9f1e9; }
+html[data-theme="dark"] .agri-action-grid > a > small { color: #b7c4b8; }
 @media (max-width: 1100px) {
   .agri-dashboard-board { grid-template-columns: minmax(190px,.8fr) minmax(300px,1.5fr); }
   .agri-dashboard-aside { grid-column: 1 / -1; grid-template-columns: repeat(3,minmax(0,1fr)); grid-template-rows: auto; }

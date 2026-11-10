@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const themeToggle = document.querySelector('[data-theme-toggle]');
   const themeLabel = document.querySelector('[data-theme-label]');
   const themeIcon = document.querySelector('[data-theme-icon]');
+  const translate = (text) => window.AgriGestLanguage?.translate(text) || text;
   document.querySelectorAll('.landing-menu .landing-nav a').forEach((link) => {
     link.addEventListener('click', () => { link.closest('details').open = false; });
   });
@@ -15,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.documentElement.dataset.theme = theme;
     const dark = theme === 'dark';
     themeToggle?.setAttribute('aria-pressed', String(dark));
-    themeToggle?.setAttribute('aria-label', dark ? 'Activer le theme clair' : 'Activer le theme sombre');
-    if (themeLabel) themeLabel.textContent = dark ? 'Clair' : 'Sombre';
+    themeToggle?.setAttribute('aria-label', translate(dark ? 'Activer le thème clair' : 'Activer le thème sombre'));
+    if (themeLabel) themeLabel.textContent = translate(dark ? 'Clair' : 'Sombre');
     if (themeIcon) themeIcon.textContent = dark ? '☼' : '◐';
   };
   applyTheme(document.documentElement.dataset.theme || 'light');
