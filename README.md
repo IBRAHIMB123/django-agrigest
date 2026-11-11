@@ -78,16 +78,13 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-6. Seed demo data (recommended for a showcase):
+6. (Optional) Seed demo data for local development only:
 
 ```bash
 python manage.py seed_demo_data
 ```
 
-Default demo account:
-
-- Username: ibrahim
-- Password: AgriGest2026!
+The demo account has no usable password unless `AGRIGEST_DEMO_PASSWORD` is set before running the command. The command refuses to run when `DJANGO_DEBUG=0`.
 
 7. Start the development server:
 
@@ -96,6 +93,23 @@ python manage.py runserver
 ```
 
 Open `http://127.0.0.1:8000/`.
+
+## Production deployment on Render
+
+AgriGest is a Django application, so it needs a Python web service rather than a static-site host such as Vercel or Netlify. The root-level `render.yaml` configures a Render web service, PostgreSQL, WhiteNoise static files, a persistent disk for uploaded media, and migrations before each deployment.
+
+1. Push this repository to GitHub.
+2. In Render, choose **New > Blueprint**, connect the repository, and review the resources and costs defined by `render.yaml` before creating them. The web service, PostgreSQL database, and persistent disk are not necessarily free.
+3. Wait for the first deployment to finish, then create an administrator from the Render Shell:
+
+   ```bash
+   python config/manage.py createsuperuser
+   ```
+
+4. If you use a custom domain, add it to `DJANGO_ALLOWED_HOSTS` and add its HTTPS origin to `DJANGO_CSRF_TRUSTED_ORIGINS` (for example, `https://agrigest.example.com`).
+5. Configure SMTP environment variables in Render if password-reset emails should be delivered. Do not use demo seed data or demo credentials in production.
+
+The Render database starts empty; local SQLite data is not copied automatically. Uploaded media is stored on the persistent disk, but should still be backed up separately.
 
 ## Main modules
 

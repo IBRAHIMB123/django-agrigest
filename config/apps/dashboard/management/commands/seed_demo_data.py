@@ -1,7 +1,9 @@
+import os
 from datetime import date, timedelta
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from apps.accounts.models import FarmProfile
 from apps.cultures.models import Culture
@@ -15,15 +17,22 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Seed demo AgriGest data for a sample farm.'
+    help = 'Seed demo AgriGest data for local development only.'
 
     def handle(self, *args, **options):
+        if not settings.DEBUG:
+            raise CommandError('La commande seed_demo_data est réservée au développement local.')
+
         user, created = User.objects.get_or_create(
             username='ibrahim',
             defaults={'first_name': 'Ibrahim', 'last_name': 'Coulibaly', 'email': 'ibrahim@example.com', 'is_staff': True}
         )
         if created:
-            user.set_password('AgriGest2026!')
+            demo_password = os.environ.get('AGRIGEST_DEMO_PASSWORD')
+            if demo_password:
+                user.set_password(demo_password)
+            else:
+                user.set_unusable_password()
             user.save()
 
         farm = FarmProfile.objects.filter(user=user, name='Exploitation Coulibaly').first() or FarmProfile.objects.filter(user=user).first()
@@ -67,4 +76,4 @@ class Command(BaseCommand):
             Recolte.objects.create(farm=farm, culture=cultures[0], parcelle=parcels[0], harvested_date=date.today() - timedelta(days=14), quantity=34, unit='tonnes', yield_per_ha=8.2)
             Recolte.objects.create(farm=farm, culture=cultures[1], parcelle=parcels[1], harvested_date=date.today() - timedelta(days=7), quantity=18, unit='tonnes', yield_per_ha=5.8)
 
-        self.stdout.write(self.style.SUCCESS('Demo data ready for ibrahim / AgriGest2026!'))
+        self.stdout.write(self.style.SUCCESS('Demo data ready. Configure AGRIGEST_DEMO_PASSWORD before seeding to enable the demo account.'))

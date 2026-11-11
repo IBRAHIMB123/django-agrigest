@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: agrigest
+    runtime: python
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt && python config/manage.py collectstatic --no-input
+    preDeployCommand: python config/manage.py migrate
+    startCommand: gunicorn --chdir config config.wsgi:application --bind 0.0.0.0:$PORT
+    healthCheckPath: /
+    disk:
+      name: agrigest-media
+      mountPath: /opt/render/project/src/config/media
+      sizeGB: 1
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        value: .onrender.com
+      - key: MEDIA_ROOT
+        value: /opt/render/project/src/config/media
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agrigest-db
+          property: connectionString
+
+databases:
+  - name: agrigest-db
+    region: frankfurt
+    databaseName: agrigest
+    user: agrigest

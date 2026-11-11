@@ -1,0 +1,8 @@
+env/
+.venv/
+config/db.sqlite3*
+config/media/
+config/cookies.txt
+.env
+.env.*
+!.env.example
